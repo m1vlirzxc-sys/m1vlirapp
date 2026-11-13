@@ -33,10 +33,6 @@
             font-weight: bold;
             cursor: pointer;
             outline: none;
-            transition: all 0.2s;
-        }
-        .lang-switcher:hover {
-            border-color: #a855f7;
         }
         .container {
             width: 100%;
@@ -67,7 +63,6 @@
             outline: none;
             margin-bottom: 15px;
             box-sizing: border-box;
-            transition: border-color 0.3s;
         }
         .input-box:focus {
             border-color: #a855f7;
@@ -83,12 +78,11 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
-            transition: opacity 0.2s, transform 0.1s;
             margin-bottom: 12px;
         }
-        .btn:active {
-            transform: scale(0.97);
-            opacity: 0.85;
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         .tg-link {
             display: inline-block;
@@ -99,24 +93,18 @@
             color: #a1a1aa;
             font-size: 14px;
             text-decoration: none;
-            transition: color 0.2s, border-color 0.2s;
-        }
-        .tg-link:hover {
-            color: #ffffff;
-            border-color: #a855f7;
         }
     </style>
 </head>
 <body>
 
-    <!-- Перемикач мови -->
     <select id="langSelect" class="lang-switcher" onchange="changeLanguage()">
         <option value="ru" selected>RU</option>
         <option value="ua">UA</option>
     </select>
 
     <div class="container">
-        <h1 id="title">mivlir</h1>
+        <h1>mivlir</h1>
         <p id="desc">Пишите идеи для бота в комменты или отправляйте прямо здесь:</p>
         
         <input type="text" id="ideaInput" class="input-box" placeholder="Например: добавить мини-игру...">
@@ -129,19 +117,25 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Словник перекладів
+        const GROUP_ID = "-5424216533"; 
+        const BOT_TOKEN = "9167237060:AAFX3SseqTEci8c2xneXnjtdXx6AJ_-AeBY";
+
         const translations = {
             ru: {
                 desc: "Пишите идеи для бота в комменты или отправляйте прямо здесь:",
                 placeholder: "Например: добавить мини-игру...",
                 btn: "Отправить идею",
-                channel: "Канал: @m1vlirka"
+                sending: "Отправка...",
+                sent: "✅ Идея отправлена в группу!",
+                empty: "Введите текст идеи!"
             },
             ua: {
                 desc: "Пишіть ідеї для бота в коментарі або надсилайте прямо тут:",
                 placeholder: "Наприклад: додати міні-гру...",
                 btn: "Надіслати ідею",
-                channel: "Канал: @m1vlirka"
+                sending: "Відправка...",
+                sent: "✅ Ідею відправлено в групу!",
+                empty: "Введіть текст ідеї!"
             }
         };
 
@@ -152,14 +146,50 @@
             document.getElementById("sendBtn").innerText = translations[lang].btn;
         }
 
-        function sendIdea() {
-            let text = document.getElementById('ideaInput').value;
-            if (text.trim() !== "") {
-                tg.sendData(text);
-                tg.close();
-            } else {
-                let lang = document.getElementById("langSelect").value;
-                alert(lang === 'ru' ? "Введите текст идеи!" : "Введіть текст ідеї!");
+        async function sendIdea() {
+            let lang = document.getElementById("langSelect").value;
+            let input = document.getElementById('ideaInput');
+            let btn = document.getElementById('sendBtn');
+            let text = input.value.trim();
+
+            if (!text) {
+                alert(translations[lang].empty);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = translations[lang].sending;
+
+            let user = tg.initDataUnsafe?.user;
+            let sender = user 
+                ? (user.username ? `@${user.username}` : `${user.first_name} (ID: ${user.id})`)
+                : "Аноним (открыто вне ТГ)";
+
+            let messageText = `💡 <b>Новая идея из App!</b>\n\n👤 <b>От:</b> ${sender}\n💬 <b>Идея:</b> ${text}`;
+
+            try {
+                let response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: GROUP_ID,
+                        text: messageText,
+                        parse_mode: 'HTML'
+                    })
+                });
+
+                if (response.ok) {
+                    alert(translations[lang].sent);
+                    input.value = "";
+                    tg.close();
+                } else {
+                    alert("Ошибка отправки. Убедись, что бот добавлен в группу `mmmlll`!");
+                }
+            } catch (e) {
+                alert("Ошибка сети!");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = translations[lang].btn;
             }
         }
 
