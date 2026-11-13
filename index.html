@@ -122,26 +122,26 @@
         <input type="text" id="ideaInput" class="input-box" placeholder="Например: добавить мини-игру...">
         <button id="sendBtn" class="btn" onclick="sendIdea()">Отправить идею</button>
         
-        <a href="https://t.me/mivlir" class="tg-link" onclick="openTg(event)">Канал: @mivlir</a>
+        <a href="https://t.me/m1vlirka" class="tg-link" onclick="openTg(event)">Канал: @m1vlirka</a>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Словник перекладів (російська - стандартна)
+        // Словник перекладів
         const translations = {
             ru: {
                 desc: "Пишите идеи для бота в комменты или отправляйте прямо здесь:",
                 placeholder: "Например: добавить мини-игру...",
                 btn: "Отправить идею",
-                channel: "Канал: @mivlir"
+                channel: "Канал: @m1vlirka"
             },
             ua: {
                 desc: "Пишіть ідеї для бота в коментарі або надсилайте прямо тут:",
                 placeholder: "Наприклад: додати міні-гру...",
                 btn: "Надіслати ідею",
-                channel: "Канал: @mivlir"
+                channel: "Канал: @m1vlirka"
             }
         };
 
@@ -165,7 +165,7 @@
 
         function openTg(e) {
             e.preventDefault();
-            tg.openTelegramLink("https://t.me/mivlir");
+            tg.openTelegramLink("https://t.me/m1vlirka");
         }
     </script>
 </body>
