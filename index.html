@@ -20,48 +20,148 @@
             text-align: center;
             box-sizing: border-box;
         }
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #1a1a1e;
+            border: 1px solid #2d2d38;
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: #a855f7;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .lang-switcher:hover {
+            border-color: #a855f7;
+        }
+        .container {
+            width: 100%;
+            max-width: 360px;
+        }
         h1 {
             font-size: 38px;
             font-weight: 800;
             letter-spacing: 3px;
             text-transform: uppercase;
-            margin: 0 0 12px 0;
+            margin: 0 0 10px 0;
             color: #a855f7;
             text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
         }
         p {
-            font-size: 16px;
+            font-size: 15px;
             color: #a1a1aa;
-            margin: 0 0 28px 0;
+            margin: 0 0 20px 0;
+        }
+        .input-box {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: #1a1a1e;
+            border: 2px solid #2d2d38;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .input-box:focus {
+            border-color: #a855f7;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+            transition: opacity 0.2s, transform 0.1s;
+            margin-bottom: 12px;
+        }
+        .btn:active {
+            transform: scale(0.97);
+            opacity: 0.85;
         }
         .tg-link {
             display: inline-block;
-            padding: 14px 32px;
+            padding: 10px 20px;
             background: #1a1a1e;
-            border: 1px solid #a855f7;
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: 600;
+            border: 1px solid #2d2d38;
+            border-radius: 10px;
+            color: #a1a1aa;
+            font-size: 14px;
             text-decoration: none;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
-            transition: transform 0.15s, background 0.2s;
+            transition: color 0.2s, border-color 0.2s;
         }
-        .tg-link:active {
-            transform: scale(0.96);
-            background: #a855f7;
+        .tg-link:hover {
+            color: #ffffff;
+            border-color: #a855f7;
         }
     </style>
 </head>
 <body>
 
-    <h1>mivlir</h1>
-    <p>Пишите идеи для бота в комменты или сюда:</p>
-    <a href="https://t.me/mivlir" class="tg-link" onclick="openTg(event)">@mivlir</a>
+    <!-- Перемикач мови -->
+    <select id="langSelect" class="lang-switcher" onchange="changeLanguage()">
+        <option value="ru" selected>RU</option>
+        <option value="ua">UA</option>
+    </select>
+
+    <div class="container">
+        <h1 id="title">mivlir</h1>
+        <p id="desc">Пишите идеи для бота в комменты или отправляйте прямо здесь:</p>
+        
+        <input type="text" id="ideaInput" class="input-box" placeholder="Например: добавить мини-игру...">
+        <button id="sendBtn" class="btn" onclick="sendIdea()">Отправить идею</button>
+        
+        <a href="https://t.me/mivlir" class="tg-link" onclick="openTg(event)">Канал: @mivlir</a>
+    </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Словник перекладів (російська - стандартна)
+        const translations = {
+            ru: {
+                desc: "Пишите идеи для бота в комменты или отправляйте прямо здесь:",
+                placeholder: "Например: добавить мини-игру...",
+                btn: "Отправить идею",
+                channel: "Канал: @mivlir"
+            },
+            ua: {
+                desc: "Пишіть ідеї для бота в коментарі або надсилайте прямо тут:",
+                placeholder: "Наприклад: додати міні-гру...",
+                btn: "Надіслати ідею",
+                channel: "Канал: @mivlir"
+            }
+        };
+
+        function changeLanguage() {
+            let lang = document.getElementById("langSelect").value;
+            document.getElementById("desc").innerText = translations[lang].desc;
+            document.getElementById("ideaInput").placeholder = translations[lang].placeholder;
+            document.getElementById("sendBtn").innerText = translations[lang].btn;
+        }
+
+        function sendIdea() {
+            let text = document.getElementById('ideaInput').value;
+            if (text.trim() !== "") {
+                tg.sendData(text);
+                tg.close();
+            } else {
+                let lang = document.getElementById("langSelect").value;
+                alert(lang === 'ru' ? "Введите текст идеи!" : "Введіть текст ідеї!");
+            }
+        }
 
         function openTg(e) {
             e.preventDefault();
