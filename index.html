@@ -63,7 +63,7 @@
 
         main {
             flex: 1;
-            padding: 20px 16px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -76,7 +76,7 @@
             background: #13131c;
             border: 1px solid #202030;
             border-radius: 16px;
-            padding: 18px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -84,25 +84,25 @@
         }
 
         .card h2 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
         }
 
         .card p {
-            font-size: 13px;
+            font-size: 12px;
             color: #9ca3af;
             line-height: 1.4;
         }
 
         textarea {
             width: 100%;
-            height: 100px;
+            height: 80px;
             background: #08080c;
             border: 1px solid #222233;
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
             color: #fff;
-            font-size: 14px;
+            font-size: 13px;
             resize: none;
             outline: none;
             transition: border-color 0.2s;
@@ -131,37 +131,71 @@
 
         .status-toast {
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
             color: #34d399;
             min-height: 16px;
         }
 
-        /* РЕЖИМ РОФЛ АПГРЕЙДЕРА (КОЛЕСО / ШАНС) */
-        .upgrade-section {
+        /* УПДЕЙТЕР В СТИЛЕ CS */
+        .upgrade-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .select-box {
+            background: #0a0a0f;
+            border: 1px solid #222233;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .select-box label {
+            font-size: 11px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        select {
+            background: #161622;
+            color: #fff;
+            border: 1px solid #2a2a3c;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .upgrade-center {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 14px;
-            padding: 10px 0;
+            gap: 12px;
+            margin-top: 5px;
         }
 
         .wheel-container {
             position: relative;
-            width: 140px;
-            height: 140px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
-            background: conic-gradient(#ff7b00 0deg 110deg, #181824 110deg 360deg);
+            background: conic-gradient(#ff7b00 0deg 180deg, #181824 180deg 360deg);
             display: flex;
             justify-content: center;
             align-items: center;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 15px rgba(255, 123, 0, 0.2);
             border: 2px solid #2a2a3c;
-            transition: transform 1s cubic-bezier(0.15, 0.85, 0.35, 1);
+            transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1);
         }
 
         .wheel-center {
-            width: 96px;
-            height: 96px;
+            width: 88px;
+            height: 88px;
             background: #0d0d12;
             border-radius: 50%;
             display: flex;
@@ -173,13 +207,13 @@
         }
 
         .wheel-chance {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: #ff7b00;
         }
 
         .wheel-label {
-            font-size: 10px;
+            font-size: 9px;
             color: #888;
             text-transform: uppercase;
         }
@@ -189,25 +223,25 @@
             top: -6px;
             width: 0; 
             height: 0; 
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
-            border-bottom: 12px solid #ff7b00;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 11px solid #ff7b00;
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
         }
 
         .upgrade-result {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             text-align: center;
-            min-height: 20px;
+            min-height: 18px;
             color: #d1d5db;
         }
 
         .upgrade-btn {
-            background: #1b1b28;
-            border: 1px solid #ff7b00;
-            color: #ff7b00;
-            padding: 10px 20px;
+            background: #ff7b00;
+            color: #fff;
+            border: none;
+            padding: 12px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
@@ -218,8 +252,7 @@
 
         .upgrade-btn:active {
             transform: scale(0.97);
-            background: #ff7b00;
-            color: #fff;
+            background: #e06d00;
         }
     </style>
 </head>
@@ -231,28 +264,45 @@
     </header>
 
     <main>
-        <!-- Карточка отправки идеи -->
+        <!-- Предложить идею -->
         <div class="card">
             <h2 id="cardTitle">Предложить идею</h2>
-            <p id="cardDesc">Напиши свою мысль или предложение — оно улетит прямо в группу.</p>
+            <p id="cardDesc">Напиши свою мысль — она улетит в группу.</p>
             <textarea id="ideaInput" placeholder="Текст идеи..."></textarea>
             <button class="submit-btn" id="sendBtn">Отправить</button>
             <div class="status-toast" id="statusToast"></div>
         </div>
 
-        <!-- Рофл апгрейдер (Колесо шанса) -->
+        <!-- Апгрейдер (Мемы 1000-7, 67 -> 228, 69) -->
         <div class="card">
             <h2 id="upTitle">🎰 Рофл Апгрейдер</h2>
-            <div class="upgrade-section">
+            <div class="upgrade-grid">
+                <div class="select-box">
+                    <label id="fromLabel">Твой предмет (Деп)</label>
+                    <select id="fromItem">
+                        <option value="67">Шмотка [67]</option>
+                        <option value="1000">Мем [1000-7]</option>
+                    </select>
+                </div>
+                <div class="select-box">
+                    <label id="toLabel">На что апаем</label>
+                    <select id="toItem">
+                        <option value="69">Шмотка [69]</option>
+                        <option value="228">Шмотка [228]</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="upgrade-center">
                 <div class="wheel-container" id="wheel">
                     <div class="pointer"></div>
                     <div class="wheel-center">
-                        <div class="wheel-chance" id="chanceText">31%</div>
+                        <div class="wheel-chance" id="chanceText">30%</div>
                         <div class="wheel-label">Шанс</div>
                     </div>
                 </div>
-                <div class="upgrade-result" id="upgradeResult">Крути апгрейд на шмотку!</div>
-                <button class="upgrade-btn" id="upgradeBtn">Крутить апгрейд</button>
+                <div class="upgrade-result" id="upgradeResult">Выбери вещи и крути апгрейд</div>
+                <button class="upgrade-btn" id="upgradeBtn">UPGRADE</button>
             </div>
         </div>
     </main>
@@ -272,28 +322,32 @@
         const ideaInput = document.getElementById('ideaInput');
         const sendBtn = document.getElementById('sendBtn');
         const upTitle = document.getElementById('upTitle');
+        const fromLabel = document.getElementById('fromLabel');
+        const toLabel = document.getElementById('toLabel');
         const upgradeBtn = document.getElementById('upgradeBtn');
         const upgradeResult = document.getElementById('upgradeResult');
 
         const texts = {
             ru: {
                 title: "Предложить идею",
-                desc: "Напиши свою мысль или предложение — оно улетит прямо в группу.",
+                desc: "Напиши свою мысль — она улетит в группу.",
                 placeholder: "Текст идеи...",
                 send: "Отправить",
                 upTitle: "🎰 Рофл Апгрейдер",
-                upBtn: "Крутить апгрейд",
-                upInit: "Крути апгрейд на шмотку!",
+                from: "Твой предмет (Деп)",
+                to: "На что апаем",
+                init: "Выбери вещи и крути апгрейд",
                 success: "Отправлено в группу!"
             },
             ua: {
                 title: "Запропонувати ідею",
-                desc: "Напиши свою думку чи пропозицію — вона полетить прямо в групу.",
+                desc: "Напиши свою думку — вона полетить у групу.",
                 placeholder: "Текст ідеї...",
                 send: "Надіслати",
                 upTitle: "🎰 Рофл Апгрейдер",
-                upBtn: "Крутити апгрейд",
-                upInit: "Крути апгрейд на шмотку!",
+                from: "Твій предмет (Деп)",
+                to: "На що апаємо",
+                init: "Вибери речі та крути апгрейд",
                 success: "Надіслано в групу!"
             }
         };
@@ -305,11 +359,14 @@
             ideaInput.placeholder = texts[currentLang].placeholder;
             sendBtn.textContent = texts[currentLang].send;
             upTitle.textContent = texts[currentLang].upTitle;
-            upgradeBtn.textContent = texts[currentLang].upBtn;
-            upgradeResult.textContent = texts[currentLang].upInit;
+            fromLabel.textContent = texts[currentLang].from;
+            toLabel.textContent = texts[currentLang].to;
+            if (upgradeResult.textContent.includes("Выбери") || upgradeResult.textContent.includes("Вибери")) {
+                upgradeResult.textContent = texts[currentLang].init;
+            }
         });
 
-        // Логика отправки идеи
+        // Отправка идеи в группу
         const statusToast = document.getElementById('statusToast');
         sendBtn.addEventListener('click', () => {
             const text = ideaInput.value.trim();
@@ -338,48 +395,67 @@
             }
         });
 
-        // Логика рофл апгрейдера
+        // Цены для расчета честного шанса апгрейдера
+        const itemValues = {
+            "67": 67,
+            "1000": 993, // 1000-7
+            "69": 69,
+            "228": 228
+        };
+
+        const fromSelect = document.getElementById('fromItem');
+        const toSelect = document.getElementById('toItem');
         const wheel = document.getElementById('wheel');
         const chanceText = document.getElementById('chanceText');
-        const roflItems = [
-            "❌ СКАМ: Ты проебал пиксели",
-            "✅ Выбил: Катана из картона (StatTrak)",
-            "✅ Выбил: Деревянный нож | Заноза",
-            "❌ СКАМ: Тебя кинул админ",
-            "✅ Выбил: Шаурма с кошатиной (Factory New)",
-            "❌ СКАМ: Ошибка 1000-7",
-            "✅ Выбил: Припять 2006 (Сувенирный)"
-        ];
 
-        let currentRotation = 0;
-        upgradeBtn.addEventListener('click', () => {
-            const chance = Math.floor(Math.random() * 85) + 5; // Случайный шанс от 5% до 90%
+        function updateChance() {
+            const valFrom = itemValues[fromSelect.value];
+            const valTo = itemValues[toSelect.value];
+
+            // Шанс = (Цена депа / Цена цели) * 100, максимум 95%
+            let chance = Math.round((valFrom / valTo) * 100);
+            if (chance > 95) chance = 95;
+            if (chance < 5) chance = 5;
+
             chanceText.textContent = chance + '%';
-            
-            // Настройка градиента колеса под шанс
             const deg = (chance / 100) * 360;
             wheel.style.background = `conic-gradient(#ff7b00 0deg ${deg}deg, #181824 ${deg}deg 360deg)`;
+        }
 
-            // Вращение колеса
+        fromSelect.addEventListener('change', updateChance);
+        toSelect.addEventListener('change', updateChance);
+        updateChance();
+
+        // Логика прокрутки апгрейдера
+        let currentRotation = 0;
+        upgradeBtn.addEventListener('click', () => {
+            const valFrom = itemValues[fromSelect.value];
+            const valTo = itemValues[toSelect.value];
+            let chance = Math.round((valFrom / valTo) * 100);
+            if (chance > 95) chance = 95;
+            if (chance < 5) chance = 5;
+
             currentRotation += 720 + Math.floor(Math.random() * 360);
             wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-            upgradeResult.textContent = "Крутим...";
+            upgradeResult.textContent = currentLang === 'ru' ? "Крутим апгрейд..." : "Крутимо апгрейд...";
             upgradeBtn.disabled = true;
 
             setTimeout(() => {
-                const win = Math.random() * 100 <= chance;
-                if (win) {
-                    const item = roflItems.filter(i => i.startsWith("✅"))[Math.floor(Math.random() * 3)];
+                const roll = Math.floor(Math.random() * 100) + 1;
+                if (roll <= chance) {
                     upgradeResult.style.color = '#34d399';
-                    upgradeResult.textContent = item;
+                    upgradeResult.textContent = currentLang === 'ru' ? 
+                        `✅ УСПЕХ! Заапгрейдил до [${toSelect.value}]!` : 
+                        `✅ УСПІХ! Заапгрейдив до [${toSelect.value}]!`;
                 } else {
-                    const item = roflItems.filter(i => i.startsWith("❌"))[Math.floor(Math.random() * 4)];
                     upgradeResult.style.color = '#f87171';
-                    upgradeResult.textContent = item;
+                    upgradeResult.textContent = currentLang === 'ru' ? 
+                        `❌ ПРОЕБАЛ! Шмотка [${fromSelect.value}] сгорела.` : 
+                        `❌ ПРОЇБАТИ! Шмотка [${fromSelect.value}] згоріла.`;
                 }
                 upgradeBtn.disabled = false;
-            }, 1000);
+            }, 1200);
         });
     </script>
 </body>
