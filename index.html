@@ -2,10 +2,22 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Mivlir App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg: #111213;
+            --surface: #18191b;
+            --surface-2: #1f2023;
+            --field: #0e0e10;
+            --line: #2a2b2e;
+            --text: #e6e6e6;
+            --muted: #8b8d91;
+            --soft: #e4e4e7;
+            color-scheme: dark;
+        }
+ 
         * {
             box-sizing: border-box;
             margin: 0;
@@ -13,39 +25,59 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-
+ 
+        html { background: var(--bg); }
+ 
         body {
-            background-color: #0b0b0e;
-            color: #f3f4f6;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            position: relative;
         }
-
+ 
+        /* Фон: падающий снег и редкие падающие звёзды */
+        #sky {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+ 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 14px 20px;
-            background: rgba(11, 11, 14, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #1a1a24;
+            background: rgba(17, 18, 19, 0.92);
+            border-bottom: 1px solid var(--line);
             position: sticky;
             top: 0;
             z-index: 10;
         }
-
+ 
+        .logo-area { display: flex; flex-direction: column; gap: 2px; }
+ 
         .logo {
             font-size: 15px;
             font-weight: 700;
             letter-spacing: 0.5px;
-            color: #ff7b00;
+            color: #fff;
         }
-
+ 
+        .world-time {
+            font-size: 11px;
+            color: var(--muted);
+            font-variant-numeric: tabular-nums;
+        }
+ 
         .lang-btn {
-            background: #161622;
-            border: 1px solid #2a2a3c;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
             color: #fff;
             padding: 6px 12px;
             border-radius: 8px;
@@ -54,51 +86,51 @@
             cursor: pointer;
             transition: 0.15s;
         }
-
+ 
         .lang-btn:active {
             transform: scale(0.95);
-            background: #ff7b00;
-            border-color: #ff7b00;
+            background: var(--soft);
+            border-color: var(--soft);
+            color: #111;
         }
-
+ 
         main {
+            position: relative;
+            z-index: 1;
             flex: 1;
-            padding: 16px;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
             display: flex;
             flex-direction: column;
             gap: 16px;
-            max-width: 480px;
-            width: 100%;
-            margin: 0 auto;
         }
-
+ 
         .card {
-            background: #13131c;
-            border: 1px solid #202030;
-            border-radius: 16px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
             padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
-
-        .card h2 {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
+ 
+        .card h2 { font-size: 15px; font-weight: 600; }
+ 
         .card p {
             font-size: 12px;
-            color: #9ca3af;
+            color: var(--muted);
             line-height: 1.4;
         }
-
+ 
+        /* ---------- Идея ---------- */
         textarea {
             width: 100%;
             height: 80px;
-            background: #08080c;
-            border: 1px solid #222233;
+            background: var(--field);
+            border: 1px solid var(--line);
             border-radius: 12px;
             padding: 10px;
             color: #fff;
@@ -107,385 +139,741 @@
             outline: none;
             transition: border-color 0.2s;
         }
-
-        textarea:focus {
-            border-color: #ff7b00;
-        }
-
-        .submit-btn {
-            background: #ff7b00;
-            color: #fff;
+ 
+        textarea:focus { border-color: var(--muted); }
+ 
+        .submit-btn,
+        .upgrade-btn {
+            width: 100%;
+            background: var(--soft);
+            color: #111;
             border: none;
             border-radius: 12px;
             padding: 12px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: background 0.2s, transform 0.1s, opacity 0.2s;
         }
-
-        .submit-btn:active {
+ 
+        .submit-btn:active,
+        .upgrade-btn:active {
             transform: scale(0.98);
-            background: #e06d00;
+            background: #c4c4c8;
         }
-
+ 
+        .upgrade-btn:disabled { opacity: 0.45; cursor: default; }
+ 
         .status-toast {
             text-align: center;
             font-size: 12px;
-            color: #34d399;
             min-height: 16px;
+            color: var(--muted);
         }
-
-        /* АПГРЕЙДЕР: НЕПОДВИЖНОЕ КОЛЕСО И КРУТЯЩАЯСЯ СТРЕЛКА */
+        .status-toast.ok  { color: #8fd3a8; }
+        .status-toast.err { color: #e59a9a; }
+ 
+        /* ---------- Апгрейдер ---------- */
         .upgrade-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-
+ 
         .select-box {
-            background: #0a0a0f;
-            border: 1px solid #222233;
+            background: var(--field);
+            border: 1px solid var(--line);
             border-radius: 12px;
             padding: 10px;
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
-
+ 
         .select-box label {
             font-size: 11px;
-            color: #888;
+            color: var(--muted);
             font-weight: 600;
             text-transform: uppercase;
         }
-
+ 
         select {
-            background: #161622;
+            background: var(--surface-2);
             color: #fff;
-            border: 1px solid #2a2a3c;
+            border: 1px solid var(--line);
             padding: 8px;
             border-radius: 8px;
             font-size: 13px;
             outline: none;
             cursor: pointer;
         }
-
+ 
+        select:disabled { opacity: 0.5; }
+ 
         .upgrade-center {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            margin-top: 5px;
+            margin-top: 4px;
         }
-
-        .wheel-container {
+ 
+        .dial {
             position: relative;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            /* Оранжевая зона шанса зафиксирована сверху/слева */
-            background: conic-gradient(#ff7b00 0deg 180deg, #181824 180deg 360deg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 15px rgba(255, 123, 0, 0.2);
-            border: 2px solid #2a2a3c;
+            width: min(260px, 74vw);
+            height: min(260px, 74vw);
+            --spin: 3600ms;
         }
-
-        .wheel-center {
-            width: 92px;
-            height: 92px;
-            background: #0d0d12;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border: 2px solid #2a2a3c;
-            text-align: center;
-            z-index: 2;
-        }
-
-        .wheel-chance {
-            font-size: 15px;
-            font-weight: 700;
-            color: #ff7b00;
-        }
-
-        .wheel-label {
-            font-size: 9px;
-            color: #888;
-            text-transform: uppercase;
-        }
-
-        /* Оболочка для вращения самой стрелки внизу */
+ 
+        .dial > svg { width: 100%; height: 100%; display: block; }
+ 
+        /* Крутится только стрелка вокруг центра */
         .pointer-wrapper {
             position: absolute;
             inset: 0;
-            border-radius: 50%;
             pointer-events: none;
-            transition: transform 1.5s cubic-bezier(0.15, 0.85, 0.35, 1);
-            z-index: 5;
+            transition: transform var(--spin) cubic-bezier(0.12, 0.75, 0.15, 1);
+            will-change: transform;
         }
-
-        .pointer {
-            position: absolute;
-            bottom: -2px;
-            left: calc(50% - 7px);
-            width: 0; 
-            height: 0; 
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
-            border-top: 13px solid #ff7b00;
-            filter: drop-shadow(0 -2px 2px rgba(0,0,0,0.5));
+ 
+        .pointer-wrapper svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
         }
-
+ 
+        .dial.win { animation: pop 0.5s ease; }
+        @keyframes pop { 50% { transform: scale(1.03); } }
+ 
         .upgrade-result {
             font-size: 13px;
             font-weight: 600;
             text-align: center;
-            min-height: 18px;
-            color: #d1d5db;
+            min-height: 34px;          /* место под две строки, чтобы кнопка не прыгала */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c9c9cd;
         }
-
-        .upgrade-btn {
-            background: #ff7b00;
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 14px;
+        .upgrade-result.win  { color: #fff; }
+        .upgrade-result.lose { color: var(--muted); }
+ 
+        /* ---------- Время мира ---------- */
+        .clocks {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+ 
+        .clock {
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+ 
+        .clock .city {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+ 
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: #4a4b4f; }
+        .dot.day { background: var(--soft); }
+ 
+        .clock .time {
+            margin-top: 4px;
+            font-size: 22px;
             font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.15s;
+            font-variant-numeric: tabular-nums;
         }
-
-        .upgrade-btn:active {
-            transform: scale(0.97);
-            background: #e06d00;
+ 
+        .clock .sub { margin-top: 2px; font-size: 11px; color: var(--muted); }
+ 
+        @media (prefers-reduced-motion: reduce) {
+            .dial.win { animation: none; }
         }
     </style>
 </head>
 <body>
-
+    <canvas id="sky"></canvas>
+ 
     <header>
-        <div class="logo">m1vlirapp</div>
-        <button class="lang-btn" id="langToggleBtn">UA / РУС</button>
+        <div class="logo-area">
+            <div class="logo">m1vlirapp</div>
+            <div class="world-time" id="localTime">--:--:--</div>
+        </div>
+        <button class="lang-btn" id="langToggleBtn" type="button">RU</button>
     </header>
-
+ 
     <main>
         <!-- Предложить идею -->
         <div class="card">
-            <h2 id="cardTitle">Предложить идею</h2>
-            <p id="cardDesc">Напиши свою мысль — она улетит в группу.</p>
-            <textarea id="ideaInput" placeholder="Текст идеи..."></textarea>
-            <button class="submit-btn" id="sendBtn">Отправить</button>
+            <h2 id="cardTitle"></h2>
+            <p id="cardDesc"></p>
+            <textarea id="ideaInput"></textarea>
+            <button class="submit-btn" id="sendBtn" type="button"></button>
             <div class="status-toast" id="statusToast"></div>
         </div>
-
+ 
         <!-- Апгрейдер -->
         <div class="card">
-            <h2 id="upTitle">🎰 Рофл Апгрейдер</h2>
+            <h2 id="upTitle"></h2>
             <div class="upgrade-grid">
                 <div class="select-box">
-                    <label id="fromLabel">Твой предмет (Деп)</label>
+                    <label id="fromLabel" for="fromItem"></label>
                     <select id="fromItem">
                         <option value="67">Шмотка [67]</option>
                         <option value="1000">Мем [1000-7]</option>
                     </select>
                 </div>
                 <div class="select-box">
-                    <label id="toLabel">На что апаем</label>
+                    <label id="toLabel" for="toItem"></label>
                     <select id="toItem">
                         <option value="69">Шмотка [69]</option>
                         <option value="228">Шмотка [228]</option>
                     </select>
                 </div>
             </div>
-
+ 
             <div class="upgrade-center">
-                <div class="wheel-container" id="wheel">
-                    <!-- Крутится только стрелка вокруг центра -->
+                <div class="dial" id="dial">
+                    <svg viewBox="0 0 260 260" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="zoneGrad" gradientUnits="userSpaceOnUse" cx="130" cy="130" r="90">
+                                <stop offset="0.62" stop-color="#3a3a3e"/>
+                                <stop offset="1" stop-color="#c9c9ce"/>
+                            </radialGradient>
+                        </defs>
+                        <circle cx="130" cy="130" r="124" fill="#141416" stroke="#2c2c30" stroke-width="2"/>
+                        <path id="ticksShort" fill="none" stroke="#4a4b50" stroke-width="1.2"/>
+                        <path id="ticksLong" fill="none" stroke="#8b8d91" stroke-width="1.8"/>
+                        <circle cx="130" cy="130" r="104" fill="#171719" stroke="#2a2a2d" stroke-width="1.5"/>
+                        <text x="130" y="33" text-anchor="middle" font-size="8" fill="#6b6c71">100%</text>
+                        <text x="30" y="133" text-anchor="middle" font-size="8" fill="#6b6c71">50%</text>
+                        <text x="230" y="133" text-anchor="middle" font-size="8" fill="#6b6c71">50%</text>
+                        <path id="zone" fill="url(#zoneGrad)" stroke="#e4e4e7" stroke-opacity="0.35" stroke-width="1"/>
+                        <circle cx="130" cy="130" r="58" fill="#101012" stroke="#2e2e32" stroke-width="2"/>
+                        <polygon points="130,80 173.3,105 173.3,155 130,180 86.7,155 86.7,105" fill="none" stroke="#26262a" stroke-width="2"/>
+                        <text id="chanceText" x="130" y="136" text-anchor="middle" font-size="24" font-weight="700" fill="#f1f1f2">0%</text>
+                        <text id="chanceLabel" x="130" y="152" text-anchor="middle" font-size="7.5" letter-spacing="1" fill="#8b8d91"></text>
+                    </svg>
                     <div class="pointer-wrapper" id="pointerWrapper">
-                        <div class="pointer"></div>
-                    </div>
-                    <div class="wheel-center">
-                        <div class="wheel-chance" id="chanceText">30%</div>
-                        <div class="wheel-label" id="chanceLabel">шанс</div>
+                        <svg viewBox="0 0 260 260">
+                            <polygon points="130,222 119,241 141,241" fill="#ececee" stroke="#0d0d0e" stroke-width="1.5" stroke-linejoin="round"/>
+                        </svg>
                     </div>
                 </div>
-                <div class="upgrade-result" id="upgradeResult">Выбери вещи и крути апгрейд</div>
-                <button class="upgrade-btn" id="upgradeBtn">UPGRADE</button>
+                <div class="upgrade-result" id="upgradeResult"></div>
+                <button class="upgrade-btn" id="upgradeBtn" type="button">UPGRADE</button>
             </div>
         </div>
+ 
+        <!-- Время мира -->
+        <div class="card">
+            <h2 id="clocksTitle"></h2>
+            <div class="clocks" id="clocks"></div>
+        </div>
     </main>
-
-    <script>
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.expand();
+ 
+<script>
+(function () {
+    'use strict';
+ 
+    /* Фон: 'snow' | 'stars' | 'both' */
+    const MODE = 'both';
+ 
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const $ = (id) => document.getElementById(id);
+ 
+    const haptic = {
+        impact(s) { try { tg.HapticFeedback.impactOccurred(s); } catch (e) {} },
+        notify(t) { try { tg.HapticFeedback.notificationOccurred(t); } catch (e) {} },
+        select()  { try { tg.HapticFeedback.selectionChanged(); } catch (e) {} }
+    };
+ 
+    if (tg) {
+        try { tg.ready(); tg.expand(); } catch (e) {}
+        try { tg.setHeaderColor('#111213'); tg.setBackgroundColor('#111213'); } catch (e) {}
+    }
+ 
+    /* ================= ТЕКСТЫ ================= */
+    const T = {
+        ru: {
+            locale: 'ru-RU', btn: 'RU',
+            title: 'Предложить идею',
+            desc: 'Напиши свою мысль — она улетит в группу.',
+            placeholder: 'Текст идеи...',
+            send: 'Отправить',
+            success: 'Отправлено в группу!',
+            testSuffix: ' (тест)',
+            empty: 'Напиши текст идеи!',
+            fail: 'Ошибка отправки',
+            upTitle: '🎰 Рофл Апгрейдер',
+            from: 'Твой предмет (Деп)',
+            to: 'На что апаем',
+            init: 'Выбери вещи и крути апгрейд',
+            spinning: 'Крутим стрелку...',
+            win: '✅ УСПЕХ! Стрелка в зоне! Заапгрейдил до [{to}]!',
+            lose: '❌ ПРОЕБАЛ! Стрелка мимо зоны. Шмотка сгорела.',
+            chLow: 'Низкий шанс', chMid: 'Средний шанс', chHigh: 'Высокий шанс',
+            clocks: 'Время мира',
+            day: 'день', night: 'ночь',
+            today: 'сегодня', tomorrow: 'завтра', yesterday: 'вчера'
+        },
+        ua: {
+            locale: 'uk-UA', btn: 'UA',
+            title: 'Запропонувати ідею',
+            desc: 'Напиши свою думку — вона полетить у групу.',
+            placeholder: 'Текст ідеї...',
+            send: 'Надіслати',
+            success: 'Надіслано в групу!',
+            testSuffix: ' (тест)',
+            empty: 'Напиши текст ідеї!',
+            fail: 'Помилка надсилання',
+            upTitle: '🎰 Рофл Апгрейдер',
+            from: 'Твій предмет (Деп)',
+            to: 'На що апаємо',
+            init: 'Вибери речі та крути апгрейд',
+            spinning: 'Крутимо стрілку...',
+            win: '✅ УСПІХ! Стрілка в зоні! Заапгрейдив до [{to}]!',
+            lose: '❌ ПРОЇБАВ! Стрілка повз зону. Шмотка згоріла.',
+            chLow: 'Низький шанс', chMid: 'Середній шанс', chHigh: 'Високий шанс',
+            clocks: 'Світовий час',
+            day: 'день', night: 'ніч',
+            today: 'сьогодні', tomorrow: 'завтра', yesterday: 'вчора'
+        },
+        en: {
+            locale: 'en-GB', btn: 'EN',
+            title: 'Suggest an idea',
+            desc: 'Write your thought — it will fly to the group.',
+            placeholder: 'Idea text...',
+            send: 'Send',
+            success: 'Sent to the group!',
+            testSuffix: ' (test)',
+            empty: 'Write your idea first!',
+            fail: 'Send error',
+            upTitle: '🎰 Rofl Upgrader',
+            from: 'Your item (Dep)',
+            to: 'Upgrade into',
+            init: 'Pick items and spin the upgrade',
+            spinning: 'Spinning the pointer...',
+            win: '✅ SUCCESS! The pointer is in the zone! Upgraded to [{to}]!',
+            lose: '❌ LOST! The pointer missed the zone. The item is gone.',
+            chLow: 'Low chance', chMid: 'Medium chance', chHigh: 'High chance',
+            clocks: 'World time',
+            day: 'day', night: 'night',
+            today: 'today', tomorrow: 'tomorrow', yesterday: 'yesterday'
         }
-
-        let currentLang = 'ru';
-        const langToggleBtn = document.getElementById('langToggleBtn');
-        const cardTitle = document.getElementById('cardTitle');
-        const cardDesc = document.getElementById('cardDesc');
-        const ideaInput = document.getElementById('ideaInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const upTitle = document.getElementById('upTitle');
-        const fromLabel = document.getElementById('fromLabel');
-        const toLabel = document.getElementById('toLabel');
-        const upgradeBtn = document.getElementById('upgradeBtn');
-        const upgradeResult = document.getElementById('upgradeResult');
-        const chanceLabel = document.getElementById('chanceLabel');
-
-        const texts = {
-            ru: {
-                title: "Предложить идею",
-                desc: "Напиши свою мысль — она улетит в группу.",
-                placeholder: "Текст идеи...",
-                send: "Отправить",
-                upTitle: "🎰 Рофл Апгрейдер",
-                from: "Твой предмет (Деп)",
-                to: "На что апаем",
-                init: "Выбери вещи и крути апгрейд",
-                chance: "шанс",
-                success: "Отправлено в группу!"
-            },
-            ua: {
-                title: "Запропонувати ідею",
-                desc: "Напиши свою думку — вона полетить у групу.",
-                placeholder: "Текст ідеї...",
-                send: "Надіслати",
-                upTitle: "🎰 Рофл Апгрейдер",
-                from: "Твій предмет (Деп)",
-                to: "На що апаємо",
-                init: "Вибери речі та крути апгрейд",
-                chance: "шанс",
-                success: "Надіслано в групу!"
-            }
-        };
-
-        langToggleBtn.addEventListener('click', () => {
-            currentLang = currentLang === 'ru' ? 'ua' : 'ru';
-            cardTitle.textContent = texts[currentLang].title;
-            cardDesc.textContent = texts[currentLang].desc;
-            ideaInput.placeholder = texts[currentLang].placeholder;
-            sendBtn.textContent = texts[currentLang].send;
-            upTitle.textContent = texts[currentLang].upTitle;
-            fromLabel.textContent = texts[currentLang].from;
-            toLabel.textContent = texts[currentLang].to;
-            chanceLabel.textContent = texts[currentLang].chance;
-            if (upgradeResult.textContent.includes("Выбери") || upgradeResult.textContent.includes("Вибери")) {
-                upgradeResult.textContent = texts[currentLang].init;
-            }
+    };
+ 
+    const LANGS = ['ru', 'ua', 'en'];
+ 
+    function detectLang() {
+        try {
+            const s = localStorage.getItem('mv_lang');
+            if (T[s]) return s;
+        } catch (e) {}
+        let code = '';
+        try {
+            code = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code) ||
+                   navigator.language || '';
+        } catch (e) {}
+        code = String(code).toLowerCase().slice(0, 2);
+        return code === 'uk' ? 'ua' : (code === 'en' ? 'en' : 'ru');
+    }
+ 
+    let lang = detectLang();
+ 
+    /* ================= ВРЕМЯ МИРА ================= */
+    const CITIES = [
+        { tz: ['Europe/Kyiv', 'Europe/Kiev'], ru: 'Киев',     ua: 'Київ',     en: 'Kyiv' },
+        { tz: ['Europe/Moscow'],              ru: 'Москва',   ua: 'Москва',   en: 'Moscow' },
+        { tz: ['Europe/London'],              ru: 'Лондон',   ua: 'Лондон',   en: 'London' },
+        { tz: ['America/New_York'],           ru: 'Нью-Йорк', ua: 'Нью-Йорк', en: 'New York' },
+        { tz: ['Asia/Dubai'],                 ru: 'Дубай',    ua: 'Дубай',    en: 'Dubai' },
+        { tz: ['Asia/Tokyo'],                 ru: 'Токио',    ua: 'Токіо',    en: 'Tokyo' }
+    ];
+ 
+    function makeFmt(tzList) {
+        // у старых WebView может не быть 'Europe/Kyiv' — пробуем запасное имя
+        for (let i = 0; i < tzList.length; i++) {
+            try {
+                return new Intl.DateTimeFormat('en-GB', {
+                    timeZone: tzList[i],
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                    hourCycle: 'h23'
+                });
+            } catch (e) {}
+        }
+        return null;
+    }
+ 
+    function parts(fmt, date) {
+        const o = {};
+        fmt.formatToParts(date).forEach((p) => { o[p.type] = p.value; });
+        return o;
+    }
+ 
+    const dayNum = (o) => Date.UTC(+o.year, +o.month - 1, +o.day) / 86400000;
+ 
+    const localFmt = makeFmt([undefined]);
+    const clocksEl = $('clocks');
+    const localTimeEl = $('localTime');
+    const tiles = [];
+ 
+    CITIES.forEach((c) => {
+        const fmt = makeFmt(c.tz);
+        if (!fmt) return;
+        const el = document.createElement('div');
+        el.className = 'clock';
+        el.innerHTML = '<div class="city"><span class="dot"></span><span class="name"></span></div>' +
+                       '<div class="time">--:--:--</div><div class="sub"></div>';
+        clocksEl.appendChild(el);
+        tiles.push({
+            c, fmt,
+            dot: el.querySelector('.dot'),
+            name: el.querySelector('.name'),
+            time: el.querySelector('.time'),
+            sub: el.querySelector('.sub')
         });
-
-        const statusToast = document.getElementById('statusToast');
-        sendBtn.addEventListener('click', () => {
-            const text = ideaInput.value.trim();
-            if (!text) {
-                statusToast.style.color = '#f87171';
-                statusToast.textContent = currentLang === 'ru' ? 'Напиши текст идеи!' : 'Напиши текст ідеї!';
-                return;
+    });
+ 
+    function tick() {
+        const now = new Date(), t = T[lang];
+        let localDay = null;
+        if (localFmt) {
+            const lp = parts(localFmt, now);
+            localDay = dayNum(lp);
+            let date = '';
+            try { date = now.toLocaleDateString(t.locale, { weekday: 'short', day: 'numeric', month: 'short' }); } catch (e) {}
+            localTimeEl.textContent = lp.hour + ':' + lp.minute + ':' + lp.second + (date ? ' · ' + date : '');
+        }
+        tiles.forEach((x) => {
+            const p = parts(x.fmt, now);
+            x.time.textContent = p.hour + ':' + p.minute + ':' + p.second;
+            const h = +p.hour;
+            const isDay = h >= 7 && h < 21;
+            x.dot.className = 'dot' + (isDay ? ' day' : '');
+            let rel = '';
+            if (localDay !== null) {
+                const diff = dayNum(p) - localDay;
+                rel = diff === 0 ? t.today : (diff > 0 ? t.tomorrow : t.yesterday);
             }
-
-            const payload = JSON.stringify({ idea: text });
-
-            if (tg && tg.initData) {
-                try {
-                    tg.sendData(payload);
-                    ideaInput.value = '';
-                    statusToast.style.color = '#34d399';
-                    statusToast.textContent = texts[currentLang].success;
-                } catch (err) {
-                    statusToast.style.color = '#f87171';
-                    statusToast.textContent = 'Ошибка отправки';
-                }
-            } else {
+            x.sub.textContent = rel + (rel ? ' · ' : '') + (isDay ? t.day : t.night);
+        });
+    }
+ 
+    function clockLoop() {
+        try { tick(); } catch (e) {}
+        setTimeout(clockLoop, 1000 - (Date.now() % 1000) + 5);
+    }
+ 
+    /* ================= ИДЕЯ ================= */
+    const ideaInput = $('ideaInput');
+    const sendBtn = $('sendBtn');
+    const statusToast = $('statusToast');
+    let toastState = null;
+ 
+    function renderToast() {
+        const t = T[lang];
+        if (!toastState) { statusToast.textContent = ''; statusToast.className = 'status-toast'; return; }
+        const k = toastState.kind;
+        statusToast.className = 'status-toast ' + (k === 'ok' ? 'ok' : 'err');
+        statusToast.textContent = k === 'ok'
+            ? t.success + (toastState.test ? t.testSuffix : '')
+            : (k === 'empty' ? t.empty : t.fail);
+    }
+ 
+    sendBtn.addEventListener('click', () => {
+        const text = ideaInput.value.trim();
+        if (!text) {
+            toastState = { kind: 'empty' };
+            haptic.notify('warning');
+            renderToast();
+            return;
+        }
+        const payload = JSON.stringify({ idea: text });
+ 
+        if (tg && tg.initData) {
+            try {
+                tg.sendData(payload);
                 ideaInput.value = '';
-                statusToast.style.color = '#34d399';
-                statusToast.textContent = texts[currentLang].success + ' (тест)';
+                toastState = { kind: 'ok' };
+                haptic.notify('success');
+            } catch (err) {
+                toastState = { kind: 'fail' };
             }
-        });
-
-        const itemValues = {
-            "67": 67,
-            "1000": 993, // 1000-7
-            "69": 69,
-            "228": 228
-        };
-
-        const fromSelect = document.getElementById('fromItem');
-        const toSelect = document.getElementById('toItem');
-        const wheel = document.getElementById('wheel');
-        const chanceText = document.getElementById('chanceText');
-        const pointerWrapper = document.getElementById('pointerWrapper');
-
-        let currentChance = 30;
-
-        function updateChance() {
-            const valFrom = itemValues[fromSelect.value];
-            const valTo = itemValues[toSelect.value];
-
-            let chance = Math.round((valFrom / valTo) * 100);
-            if (chance > 95) chance = 95;
-            if (chance < 5) chance = 5;
-            currentChance = chance;
-
-            chanceText.textContent = chance + '%';
-            // Оранжевая зона начинается сверху (0 градусов) и заполняется по часовой стрелке на нужный угол
-            const deg = (chance / 100) * 360;
-            wheel.style.background = `conic-gradient(#ff7b00 0deg ${deg}deg, #181824 ${deg}deg 360deg)`;
+        } else {
+            ideaInput.value = '';
+            toastState = { kind: 'ok', test: true };
         }
-
-        fromSelect.addEventListener('change', updateChance);
-        toSelect.addEventListener('change', updateChance);
+        renderToast();
+    });
+ 
+    /* ================= АПГРЕЙДЕР ================= */
+    const ITEM_VALUES = { '67': 67, '1000': 993 /* 1000-7 */, '69': 69, '228': 228 };
+ 
+    const fromSel = $('fromItem');
+    const toSel = $('toItem');
+    const dial = $('dial');
+    const zone = $('zone');
+    const chanceText = $('chanceText');
+    const chanceLabel = $('chanceLabel');
+    const pointerWrapper = $('pointerWrapper');
+    const upgradeBtn = $('upgradeBtn');
+    const upgradeResult = $('upgradeResult');
+ 
+    const SPIN_MS = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 400 : 3600;
+    dial.style.setProperty('--spin', SPIN_MS + 'ms');
+ 
+    let chance = 30;
+    let totalRotation = 0;
+    let spinning = false;
+    let resultState = { kind: 'init' };
+ 
+    /* Шкала как на референсе: 0% внизу, 50% слева и справа, 100% вверху.
+       Угол θ считается по часовой стрелке от верха; низ = 180°. */
+    const C = 130;
+    const f2 = (n) => n.toFixed(2);
+    function pt(r, th) {
+        const a = th * Math.PI / 180;
+        return [C + r * Math.sin(a), C - r * Math.cos(a)];
+    }
+ 
+    function sector(rO, rI, a1, a2) {
+        const p1 = pt(rO, a1), p2 = pt(rO, a2), p3 = pt(rI, a2), p4 = pt(rI, a1);
+        const large = (a2 - a1) > 180 ? 1 : 0;
+        return 'M' + f2(p1[0]) + ' ' + f2(p1[1]) +
+               'A' + rO + ' ' + rO + ' 0 ' + large + ' 1 ' + f2(p2[0]) + ' ' + f2(p2[1]) +
+               'L' + f2(p3[0]) + ' ' + f2(p3[1]) +
+               'A' + rI + ' ' + rI + ' 0 ' + large + ' 0 ' + f2(p4[0]) + ' ' + f2(p4[1]) + 'Z';
+    }
+ 
+    function buildTicks() {
+        let shortD = '', longD = '';
+        for (let p = 0; p <= 100; p += 2) {
+            const long = p % 10 === 0;
+            const r1 = long ? 109 : 114, r2 = 119;
+            const sides = (p === 0 || p === 100) ? [1] : [-1, 1];
+            sides.forEach((s) => {
+                const th = 180 + s * p * 1.8;
+                const a = pt(r1, th), b = pt(r2, th);
+                const seg = 'M' + f2(a[0]) + ' ' + f2(a[1]) + 'L' + f2(b[0]) + ' ' + f2(b[1]);
+                if (long) longD += seg; else shortD += seg;
+            });
+        }
+        $('ticksShort').setAttribute('d', shortD);
+        $('ticksLong').setAttribute('d', longD);
+    }
+ 
+    function calcChance() {
+        const c = ITEM_VALUES[fromSel.value] / ITEM_VALUES[toSel.value] * 100;
+        return Math.round(Math.min(95, Math.max(5, c)) * 100) / 100;
+    }
+ 
+    function renderLevel() {
+        const t = T[lang];
+        const k = chance < 33 ? t.chLow : (chance < 66 ? t.chMid : t.chHigh);
+        chanceLabel.textContent = k.toUpperCase();
+    }
+ 
+    function updateChance() {
+        chance = calcChance();
+        const half = chance * 1.8;                       // зона симметрична вокруг низа
+        zone.setAttribute('d', sector(90, 60, 180 - half, 180 + half));
+        chanceText.textContent = chance.toFixed(2) + '%';
+        renderLevel();
+    }
+ 
+    /* Бросок и угол приземления стрелки считаются вместе:
+       стрелка ВСЕГДА останавливается там, где выпал результат. */
+    function planSpin(ch, prevTotal, rand) {
+        rand = rand || Math.random;
+        const half = ch * 1.8;
+        const isWin = rand() * 100 < ch;
+        let theta;
+        if (isWin) {
+            const m = Math.min(3, half * 0.2);
+            theta = 180 - half + m + rand() * (2 * half - 2 * m);
+        } else {
+            const span = 360 - 2 * half;
+            const m = Math.min(3, span * 0.2);
+            theta = 180 + half + m + rand() * (span - 2 * m);
+        }
+        theta = ((theta % 360) + 360) % 360;
+        const want = (((theta - 180) % 360) + 360) % 360;        // поворот от стартовой позиции (низ)
+        const base = prevTotal - (((prevTotal % 360) + 360) % 360);
+        return { isWin: isWin, theta: theta, total: base + 360 * 5 + want };
+    }
+ 
+    function renderResult() {
+        const t = T[lang], s = resultState;
+        let msg = t.init, cls = '';
+        if (s.kind === 'spinning') msg = t.spinning;
+        else if (s.kind === 'win')  { msg = t.win.replace('{to}', s.to); cls = ' win'; }
+        else if (s.kind === 'lose') { msg = t.lose; cls = ' lose'; }
+        upgradeResult.textContent = msg;
+        upgradeResult.className = 'upgrade-result' + cls;
+    }
+ 
+    function onItemChange() {
+        haptic.select();
         updateChance();
-
-        let totalPointerRotation = 0;
-
-        upgradeBtn.addEventListener('click', () => {
-            upgradeResult.textContent = currentLang === 'ru' ? "Крутим стрелку..." : "Крутимо стрілку...";
-            upgradeBtn.disabled = true;
-
-            // Определяем заранее, вин или луз по честному шансу
-            const roll = Math.floor(Math.random() * 100) + 1;
-            const isWin = roll <= currentChance;
-
-            // Оранжевая зона занимает от 0 до currentChance градусов.
-            // Черная зона занимает от currentChance до 360 градусов.
-            let targetAngle;
-            if (isWin) {
-                // Случайный угол внутри оранжевой зоны с отступами от краев
-                targetAngle = Math.floor(Math.random() * (currentChance - 10)) + 5;
-            } else {
-                // Случайный угол внутри черной зоны
-                targetAngle = Math.floor(Math.random() * (360 - currentChance - 10)) + currentChance + 5;
-            }
-
-            // Делаем 4 полных оборота (1440°) + докручиваем до точного угла целевой зоны
-            totalPointerRotation += 1440 + (targetAngle - (totalPointerRotation % 360));
-            pointerWrapper.style.transform = `rotate(${totalPointerRotation}deg)`;
-
-            setTimeout(() => {
-                if (isWin) {
-                    upgradeResult.style.color = '#34d399';
-                    upgradeResult.textContent = currentLang === 'ru' ? 
-                        `✅ УСПЕХ! Стрелка в зоне! Заапгрейдил до [${toSelect.value}]!` : 
-                        `✅ УСПІХ! Стрілка в зоні! Заапгрейдив до [${toSelect.value}]!`;
-                } else {
-                    upgradeResult.style.color = '#f87171';
-                    upgradeResult.textContent = currentLang === 'ru' ? 
-                        `❌ ПРОЕБАЛ! Стрелка мимо зоны. Шмотка сгорела.` : 
-                        `❌ ПРОЇБАТИ! Стрілка повз зону. Шмотка згоріла.`;
-                }
-                upgradeBtn.disabled = false;
-            }, 1600);
+        resultState = { kind: 'init' };
+        renderResult();
+    }
+ 
+    fromSel.addEventListener('change', onItemChange);
+    toSel.addEventListener('change', onItemChange);
+ 
+    upgradeBtn.addEventListener('click', () => {
+        if (spinning) return;
+        spinning = true;
+        upgradeBtn.disabled = true;
+        fromSel.disabled = true;
+        toSel.disabled = true;
+        resultState = { kind: 'spinning' };
+        renderResult();
+        haptic.impact('medium');
+ 
+        const plan = planSpin(chance, totalRotation);
+        totalRotation = plan.total;
+        pointerWrapper.style.transform = 'rotate(' + totalRotation + 'deg)';
+        const to = toSel.value;
+ 
+        setTimeout(() => {
+            resultState = { kind: plan.isWin ? 'win' : 'lose', to: to };
+            renderResult();
+            dial.classList.remove('win');
+            if (plan.isWin) { void dial.offsetWidth; dial.classList.add('win'); }
+            haptic.notify(plan.isWin ? 'success' : 'error');
+            spinning = false;
+            upgradeBtn.disabled = false;
+            fromSel.disabled = false;
+            toSel.disabled = false;
+        }, SPIN_MS + 150);
+    });
+ 
+    /* ================= ПРИМЕНИТЬ ЯЗЫК ================= */
+    const langBtn = $('langToggleBtn');
+ 
+    function applyLang() {
+        const t = T[lang];
+        document.documentElement.lang = lang === 'ua' ? 'uk' : lang;
+        langBtn.textContent = t.btn;
+        $('cardTitle').textContent = t.title;
+        $('cardDesc').textContent = t.desc;
+        ideaInput.placeholder = t.placeholder;
+        sendBtn.textContent = t.send;
+        $('upTitle').textContent = t.upTitle;
+        $('fromLabel').textContent = t.from;
+        $('toLabel').textContent = t.to;
+        $('clocksTitle').textContent = t.clocks;
+        tiles.forEach((x) => { x.name.textContent = x.c[lang]; });
+        renderLevel();
+        renderResult();
+        renderToast();
+        try { tick(); } catch (e) {}
+    }
+ 
+    langBtn.addEventListener('click', () => {
+        lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length];
+        try { localStorage.setItem('mv_lang', lang); } catch (e) {}
+        haptic.select();
+        applyLang();
+    });
+ 
+    buildTicks();
+    updateChance();
+    applyLang();
+    clockLoop();
+ 
+    /* ================= ФОН: СНЕГ + ПАДАЮЩИЕ ЗВЁЗДЫ ================= */
+    try {
+        const cv = $('sky');
+        const ctx = cv.getContext('2d');
+        const DPR = Math.min(window.devicePixelRatio || 1, 2);
+        const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let W = 0, H = 0, flakes = [], shoots = [], nextShoot = 2500, last = 0;
+ 
+        const rnd = (a, b) => a + Math.random() * (b - a);
+ 
+        const makeFlake = (atTop) => ({
+            x: rnd(0, W), y: atTop ? -5 : rnd(0, H),
+            r: rnd(0.7, 2.2), v: rnd(18, 55),
+            sw: rnd(8, 26), ph: rnd(0, 6.28), a: rnd(0.25, 0.7)
         });
-    </script>
+ 
+        const draw = (ts, dt) => {
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < flakes.length; i++) {
+                let fl = flakes[i];
+                fl.y += fl.v * dt;
+                fl.x += Math.sin(ts / 1000 * 0.6 + fl.ph) * fl.sw * dt;
+                if (fl.y > H + 5) { fl = flakes[i] = makeFlake(true); }
+                ctx.globalAlpha = fl.a;
+                ctx.beginPath();
+                ctx.arc(fl.x, fl.y, fl.r, 0, 6.2832);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+ 
+            if (MODE !== 'snow' && !reduce) {
+                nextShoot -= dt * 1000;
+                if (nextShoot <= 0) {
+                    const a = rnd(0.55, 0.85), sp = rnd(520, 820);
+                    shoots.push({ x: rnd(0.3, 1) * W, y: rnd(0, 0.35) * H, vx: -Math.cos(a) * sp, vy: Math.sin(a) * sp });
+                    nextShoot = rnd(3500, 8000);
+                }
+                for (let j = shoots.length - 1; j >= 0; j--) {
+                    const s = shoots[j];
+                    s.x += s.vx * dt; s.y += s.vy * dt;
+                    if (s.y > H + 40 || s.x < -40) { shoots.splice(j, 1); continue; }
+                    const tx = s.x - s.vx * 0.13, ty = s.y - s.vy * 0.13;
+                    const g = ctx.createLinearGradient(s.x, s.y, tx, ty);
+                    g.addColorStop(0, 'rgba(255,255,255,0.85)');
+                    g.addColorStop(1, 'rgba(255,255,255,0)');
+                    ctx.strokeStyle = g;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(s.x, s.y);
+                    ctx.lineTo(tx, ty);
+                    ctx.stroke();
+                }
+            }
+        };
+ 
+        const resize = () => {
+            W = window.innerWidth; H = window.innerHeight;
+            cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+            flakes = [];
+            if (MODE !== 'stars') {
+                const n = Math.max(30, Math.min(Math.round(W * H / 9000), 110));
+                for (let i = 0; i < n; i++) flakes.push(makeFlake(false));
+            }
+            if (reduce) draw(0, 0);
+        };
+ 
+        const frame = (ts) => {
+            const dt = Math.min((ts - last) / 1000, 0.05);
+            last = ts;
+            draw(ts, dt);
+            requestAnimationFrame(frame);
+        };
+ 
+        window.addEventListener('resize', resize);
+        resize();
+        if (!reduce) requestAnimationFrame((ts) => { last = ts; frame(ts); });
+    } catch (e) { /* фон не критичен — приложение работает и без него */ }
+})();
+</script>
 </body>
 </html>
