@@ -2,201 +2,420 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mivlir</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mivlir App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            background-color: #0d0d0f;
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0b0b0e;
+            color: #f3f4f6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            box-sizing: border-box;
+            padding: 16px 20px;
+            background: rgba(11, 11, 14, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #1f1f2e;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        .lang-switcher {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #1a1a1e;
-            border: 1px solid #2d2d38;
-            border-radius: 8px;
-            padding: 6px 12px;
-            color: #a855f7;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            outline: none;
-        }
-        .container {
-            width: 100%;
-            max-width: 360px;
-        }
-        h1 {
-            font-size: 38px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin: 0 0 10px 0;
-            color: #a855f7;
-            text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
-        }
-        p {
-            font-size: 15px;
-            color: #a1a1aa;
-            margin: 0 0 20px 0;
-        }
-        .input-box {
-            width: 100%;
-            padding: 14px 16px;
-            background-color: #1a1a1e;
-            border: 2px solid #2d2d38;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-        .input-box:focus {
-            border-color: #a855f7;
-        }
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #9333ea, #a855f7);
-            border: none;
-            border-radius: 12px;
-            color: white;
+
+        .logo {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #a78bfa;
+        }
+
+        .burger-btn {
+            background: #16161f;
+            border: 1px solid #272738;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
-            margin-bottom: 12px;
+            transition: 0.15s ease;
         }
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+
+        .burger-btn:active {
+            transform: scale(0.92);
         }
-        .tg-link {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #1a1a1e;
-            border: 1px solid #2d2d38;
+
+        .burger-btn span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background-color: #fff;
+            border-radius: 2px;
+        }
+
+        .dropdown-menu {
+            position: fixed;
+            top: 68px;
+            right: 16px;
+            background: #14141c;
+            border: 1px solid #272738;
+            border-radius: 16px;
+            padding: 8px;
+            width: 180px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 20;
+        }
+
+        .dropdown-menu.active {
+            display: flex;
+        }
+
+        .menu-item {
+            background: transparent;
+            border: none;
+            color: #f3f4f6;
+            padding: 12px 14px;
             border-radius: 10px;
-            color: #a1a1aa;
+            text-align: left;
             font-size: 14px;
-            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .menu-item:hover, .menu-item:active {
+            background: rgba(167, 139, 250, 0.15);
+        }
+
+        main {
+            flex: 1;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #13131a;
+            border: 1px solid #212130;
+            border-radius: 20px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: #09090c;
+            border: 1px solid #222233;
+            border-radius: 14px;
+            padding: 12px;
+            color: #fff;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            border-color: #8b5cf6;
+        }
+
+        .submit-btn {
+            background: #7c3aed;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+            background: #6d28d9;
+        }
+
+        .status-toast {
+            text-align: center;
+            font-size: 13px;
+            color: #34d399;
+            min-height: 18px;
+        }
+
+        /* Фонарик (вспышка) */
+        .flashlight-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.15s ease;
+        }
+
+        .flashlight-overlay.active {
+            display: flex;
+        }
+
+        .flash-controls {
+            background: rgba(15, 15, 20, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 20px;
+            width: 85%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            color: #fff;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .flash-title {
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .slider-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .slider-box label {
+            font-size: 12px;
+            color: #d1d5db;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #fff;
+            cursor: pointer;
+        }
+
+        .flash-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .flash-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .flash-btn:active {
+            transform: scale(0.97);
+        }
+
+        .flash-btn.exit {
+            background: #dc2626;
+            border-color: #dc2626;
         }
     </style>
 </head>
 <body>
 
-    <select id="langSelect" class="lang-switcher" onchange="changeLanguage()">
-        <option value="ru" selected>RU</option>
-        <option value="ua">UA</option>
-    </select>
+    <header>
+        <div class="logo">m1vlirapp</div>
+        <button class="burger-btn" id="burgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
 
-    <div class="container">
-        <h1>mivlir</h1>
-        <p id="desc">Пишите идеи для бота в комменты или отправляйте прямо здесь:</p>
-        
-        <input type="text" id="ideaInput" class="input-box" placeholder="Например: добавить мини-игру...">
-        <button id="sendBtn" class="btn" onclick="sendIdea()">Отправить идею</button>
-        
-        <a href="https://t.me/m1vlirka" class="tg-link" onclick="openTg(event)">Канал: @m1vlirka</a>
+    <div class="dropdown-menu" id="dropdownMenu">
+        <button class="menu-item" id="openFlashlightBtn">🔦 Фонарик</button>
+    </div>
+
+    <main>
+        <div class="card">
+            <h2>Предложить идею</h2>
+            <p>Напиши свою мысль или предложение — оно сразу отправится в бот.</p>
+            <textarea id="ideaInput" placeholder="Текст идеи..."></textarea>
+            <button class="submit-btn" id="sendBtn">Отправить</button>
+            <div class="status-toast" id="statusToast"></div>
+        </div>
+    </main>
+
+    <div class="flashlight-overlay" id="flashlightOverlay">
+        <div class="flash-controls">
+            <div class="flash-title">Режим вспышки</div>
+            <div class="slider-box">
+                <label>
+                    <span>Яркость</span>
+                    <span id="brightnessVal">100%</span>
+                </label>
+                <input type="range" id="brightnessSlider" min="20" max="100" value="100">
+            </div>
+            <div class="flash-buttons">
+                <button class="flash-btn" id="togglePowerBtn">Выключить свет</button>
+                <button class="flash-btn" id="fullscreenBtn">На весь экран</button>
+                <button class="flash-btn exit" id="exitFlashBtn">Выйти</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-
-        const GROUP_ID = "-5424216533"; 
-        const BOT_TOKEN = "9167237060:AAFX3SseqTEci8c2xneXnjtdXx6AJ_-AeBY";
-
-        const translations = {
-            ru: {
-                desc: "Пишите идеи для бота в комменты или отправляйте прямо здесь:",
-                placeholder: "Например: добавить мини-игру...",
-                btn: "Отправить идею",
-                sending: "Отправка...",
-                sent: "✅ Идея отправлена в группу!",
-                empty: "Введите текст идеи!"
-            },
-            ua: {
-                desc: "Пишіть ідеї для бота в коментарі або надсилайте прямо тут:",
-                placeholder: "Наприклад: додати міні-гру...",
-                btn: "Надіслати ідею",
-                sending: "Відправка...",
-                sent: "✅ Ідею відправлено в групу!",
-                empty: "Введіть текст ідеї!"
-            }
-        };
-
-        function changeLanguage() {
-            let lang = document.getElementById("langSelect").value;
-            document.getElementById("desc").innerText = translations[lang].desc;
-            document.getElementById("ideaInput").placeholder = translations[lang].placeholder;
-            document.getElementById("sendBtn").innerText = translations[lang].btn;
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
         }
 
-        async function sendIdea() {
-            let lang = document.getElementById("langSelect").value;
-            let input = document.getElementById('ideaInput');
-            let btn = document.getElementById('sendBtn');
-            let text = input.value.trim();
+        const burgerBtn = document.getElementById('burgerBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const openFlashlightBtn = document.getElementById('openFlashlightBtn');
+        const ideaInput = document.getElementById('ideaInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const statusToast = document.getElementById('statusToast');
 
+        const flashlightOverlay = document.getElementById('flashlightOverlay');
+        const brightnessSlider = document.getElementById('brightnessSlider');
+        const brightnessVal = document.getElementById('brightnessVal');
+        const togglePowerBtn = document.getElementById('togglePowerBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const exitFlashBtn = document.getElementById('exitFlashBtn');
+
+        let isLightOn = true;
+
+        burgerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            dropdownMenu.classList.remove('active');
+        });
+
+        sendBtn.addEventListener('click', () => {
+            const text = ideaInput.value.trim();
             if (!text) {
-                alert(translations[lang].empty);
+                statusToast.style.color = '#f87171';
+                statusToast.textContent = 'Напиши текст идеи!';
                 return;
             }
 
-            btn.disabled = true;
-            btn.innerText = translations[lang].sending;
+            const payload = JSON.stringify({ idea: text });
 
-            let user = tg.initDataUnsafe?.user;
-            let sender = user 
-                ? (user.username ? `@${user.username}` : `${user.first_name} (ID: ${user.id})`)
-                : "Аноним (открыто вне ТГ)";
-
-            let messageText = `💡 <b>Новая идея из App!</b>\n\n👤 <b>От:</b> ${sender}\n💬 <b>Идея:</b> ${text}`;
-
-            try {
-                let response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: GROUP_ID,
-                        text: messageText,
-                        parse_mode: 'HTML'
-                    })
-                });
-
-                if (response.ok) {
-                    alert(translations[lang].sent);
-                    input.value = "";
-                    tg.close();
-                } else {
-                    alert("Ошибка отправки. Убедись, что бот добавлен в группу `mmmlll`!");
+            if (tg && tg.initData) {
+                try {
+                    tg.sendData(payload);
+                    ideaInput.value = '';
+                    statusToast.style.color = '#34d399';
+                    statusToast.textContent = 'Отправлено!';
+                } catch (err) {
+                    statusToast.style.color = '#f87171';
+                    statusToast.textContent = 'Ошибка отправки';
                 }
-            } catch (e) {
-                alert("Ошибка сети!");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = translations[lang].btn;
+            } else {
+                ideaInput.value = '';
+                statusToast.style.color = '#34d399';
+                statusToast.textContent = 'Отправлено (тестовый режим)';
             }
+        });
+
+        openFlashlightBtn.addEventListener('click', () => {
+            dropdownMenu.classList.remove('active');
+            flashlightOverlay.classList.add('active');
+            isLightOn = true;
+            updateLight();
+            if (tg) tg.expand();
+        });
+
+        function updateLight() {
+            if (!isLightOn) {
+                flashlightOverlay.style.backgroundColor = '#0a0a0f';
+                togglePowerBtn.textContent = 'Включить свет';
+                return;
+            }
+            const val = brightnessSlider.value;
+            brightnessVal.textContent = val + '%';
+            const c = Math.round((val / 100) * 255);
+            flashlightOverlay.style.backgroundColor = `rgb(${c}, ${c}, ${c})`;
+            togglePowerBtn.textContent = 'Выключить свет';
         }
 
-        function openTg(e) {
-            e.preventDefault();
-            tg.openTelegramLink("https://t.me/m1vlirka");
-        }
+        brightnessSlider.addEventListener('input', updateLight);
+
+        togglePowerBtn.addEventListener('click', () => {
+            isLightOn = !isLightOn;
+            updateLight();
+        });
+
+        fullscreenBtn.addEventListener('click', () => {
+            if (tg) {
+                tg.expand();
+                if (tg.requestFullscreen) tg.requestFullscreen();
+            }
+            if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+        });
+
+        exitFlashBtn.addEventListener('click', () => {
+            flashlightOverlay.classList.remove('active');
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+            if (tg && tg.exitFullscreen) tg.exitFullscreen();
+        });
     </script>
 </body>
 </html>
