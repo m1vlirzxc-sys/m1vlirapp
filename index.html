@@ -17,7 +17,7 @@
             --soft: #e4e4e7;
             color-scheme: dark;
         }
- 
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -25,9 +25,11 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
- 
+
+        [hidden] { display: none !important; }
+
         html { background: var(--bg); }
- 
+
         body {
             background: var(--bg);
             color: var(--text);
@@ -37,7 +39,7 @@
             overflow-x: hidden;
             position: relative;
         }
- 
+
         /* Фон: падающий снег и редкие падающие звёзды */
         #sky {
             position: fixed;
@@ -47,53 +49,80 @@
             pointer-events: none;
             z-index: 0;
         }
- 
+
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 20px;
+            gap: 10px;
+            padding: 12px 16px;
             background: rgba(17, 18, 19, 0.92);
             border-bottom: 1px solid var(--line);
             position: sticky;
             top: 0;
             z-index: 10;
         }
- 
-        .logo-area { display: flex; flex-direction: column; gap: 2px; }
- 
-        .logo {
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #fff;
-        }
- 
+
+        .logo-area { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+        .logo { font-size: 15px; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
+
         .world-time {
             font-size: 11px;
             color: var(--muted);
             font-variant-numeric: tabular-nums;
+            white-space: nowrap;
         }
- 
+
+        .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+        .balance {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            height: 32px;
+            padding-left: 10px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .balance.bump { animation: bump 0.35s ease; }
+        @keyframes bump { 40% { transform: scale(1.08); } }
+
+        .balance .plus {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-left: 1px solid var(--line);
+            background: transparent;
+            color: #fff;
+            font-size: 17px;
+            line-height: 1;
+            cursor: pointer;
+            border-radius: 0 7px 7px 0;
+        }
+        .balance .plus:active { background: var(--soft); color: #111; }
+
+        .coin { width: 14px; height: 14px; display: inline-block; vertical-align: -2px; }
+
         .lang-btn {
             background: var(--surface-2);
             border: 1px solid var(--line);
             color: #fff;
-            padding: 6px 12px;
+            height: 32px;
+            padding: 0 11px;
             border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.15s;
         }
- 
-        .lang-btn:active {
-            transform: scale(0.95);
-            background: var(--soft);
-            border-color: var(--soft);
-            color: #111;
-        }
- 
+        .lang-btn:active { transform: scale(0.95); background: var(--soft); border-color: var(--soft); color: #111; }
+
         main {
             position: relative;
             z-index: 1;
@@ -106,7 +135,9 @@
             flex-direction: column;
             gap: 16px;
         }
- 
+
+        .view { display: flex; flex-direction: column; gap: 16px; }
+
         .card {
             background: var(--surface);
             border: 1px solid var(--line);
@@ -116,15 +147,47 @@
             flex-direction: column;
             gap: 12px;
         }
- 
+
         .card h2 { font-size: 15px; font-weight: 600; }
- 
-        .card p {
-            font-size: 12px;
-            color: var(--muted);
-            line-height: 1.4;
+        .card p { font-size: 12px; color: var(--muted); line-height: 1.4; }
+        .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .center { text-align: center; }
+
+        /* ---------- Кнопки ---------- */
+        .btn {
+            width: 100%;
+            background: var(--soft);
+            color: #111;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s, opacity 0.2s;
         }
- 
+        .btn:active { transform: scale(0.98); background: #c4c4c8; }
+        .btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+        .btn.ghost { background: var(--surface-2); color: #fff; border: 1px solid var(--line); }
+        .btn.ghost:active { background: #2a2b2f; }
+        .btn.small { width: auto; padding: 8px 16px; font-size: 12px; border-radius: 10px; }
+
+        .ghost-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            color: #fff;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .ghost-btn:active { background: #2a2b2f; }
+        .ghost-btn:disabled { opacity: 0.4; }
+
         /* ---------- Идея ---------- */
         textarea {
             width: 100%;
@@ -139,208 +202,400 @@
             outline: none;
             transition: border-color 0.2s;
         }
- 
         textarea:focus { border-color: var(--muted); }
- 
-        .submit-btn,
-        .upgrade-btn {
-            width: 100%;
-            background: var(--soft);
-            color: #111;
-            border: none;
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s, opacity 0.2s;
-        }
- 
-        .submit-btn:active,
-        .upgrade-btn:active {
-            transform: scale(0.98);
-            background: #c4c4c8;
-        }
- 
-        .upgrade-btn:disabled { opacity: 0.45; cursor: default; }
- 
-        .status-toast {
-            text-align: center;
-            font-size: 12px;
-            min-height: 16px;
-            color: var(--muted);
-        }
+
+        .status-toast { text-align: center; font-size: 12px; min-height: 16px; color: var(--muted); }
         .status-toast.ok  { color: #8fd3a8; }
         .status-toast.err { color: #e59a9a; }
- 
-        /* ---------- Апгрейдер ---------- */
-        .upgrade-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+
+        /* ---------- Редкости ---------- */
+        .r-mil  { --rc: #4b69ff; --rg: rgba(75, 105, 255, 0.38); }
+        .r-res  { --rc: #8847ff; --rg: rgba(136, 71, 255, 0.38); }
+        .r-cla  { --rc: #d32ce6; --rg: rgba(211, 44, 230, 0.36); }
+        .r-cov  { --rc: #eb4b4b; --rg: rgba(235, 75, 75, 0.38); }
+        .r-gold { --rc: #e4ae39; --rg: rgba(228, 174, 57, 0.42); }
+
+        /* ---------- Список кейсов ---------- */
+        .cases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+        .case-tile {
+            background: none;
+            border: none;
+            color: inherit;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
- 
-        .select-box {
+
+        .case-art {
+            background: linear-gradient(180deg, #36373c, #222327);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            aspect-ratio: 1.25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            transition: transform 0.15s, border-color 0.15s;
+        }
+        .case-art svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.5)); }
+        .case-tile:active .case-art { transform: scale(0.97); border-color: var(--muted); }
+
+        .case-name { font-size: 13px; font-weight: 600; padding-left: 2px; }
+        .case-price { font-size: 12px; color: var(--muted); padding-left: 2px; font-variant-numeric: tabular-nums; }
+
+        /* ---------- Предметы ---------- */
+        .items-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+        .item { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+        .art {
+            aspect-ratio: 1.45;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 6px;
+            background: linear-gradient(180deg, #36373c, #232428);
+            border-radius: 8px 8px 4px 4px;
+            border-bottom: 3px solid var(--rc);
+            box-shadow: inset 0 -26px 24px -22px var(--rg);
+            overflow: hidden;
+        }
+        .art svg, .art img { width: 100%; height: 100%; display: block; filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.55)); object-fit: contain; }
+
+        .item .w { font-size: 10.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .item .s { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .mini-sell {
+            margin-top: 2px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            color: #fff;
+            border-radius: 6px;
+            padding: 4px 0;
+            font-size: 10.5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-variant-numeric: tabular-nums;
+        }
+        .mini-sell:active { background: var(--soft); color: #111; }
+
+        /* ---------- Страница кейса ---------- */
+        .topbar { display: flex; justify-content: space-between; align-items: center; }
+
+        .stage {
+            position: relative;
+            min-height: 176px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .big-crate { width: min(250px, 72vw); }
+        .big-crate svg { width: 100%; display: block; filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.55)); }
+
+        .roulette {
+            display: none;
+            position: relative;
+            width: 100%;
+            height: 136px;
+            overflow: hidden;
+            border-radius: 12px;
+            background: var(--field);
+            border: 1px solid var(--line);
+        }
+        .stage.spin .big-crate { display: none; }
+        .stage.spin .roulette { display: block; }
+
+        .roulette::before, .roulette::after {
+            content: "";
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 38px;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .roulette::before { left: 0;  background: linear-gradient(90deg, #0e0e10, rgba(14, 14, 16, 0)); }
+        .roulette::after  { right: 0; background: linear-gradient(270deg, #0e0e10, rgba(14, 14, 16, 0)); }
+
+        .marker {
+            position: absolute;
+            left: 50%;
+            top: 0; bottom: 0;
+            width: 2px;
+            margin-left: -1px;
+            background: #f0f0f2;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.55);
+            z-index: 4;
+        }
+        .marker::before, .marker::after { content: ""; position: absolute; left: -6px; border: 6px solid transparent; }
+        .marker::before { top: 0;    border-top-color: #f0f0f2;    border-bottom: 0; }
+        .marker::after  { bottom: 0; border-bottom-color: #f0f0f2; border-top: 0; }
+
+        .track { position: absolute; left: 0; top: 9px; display: flex; gap: 6px; will-change: transform; }
+
+        .rcard {
+            flex: 0 0 108px;
+            height: 116px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 6px 6px 5px;
+            background: linear-gradient(180deg, #2c2d31, #1c1d20);
+            border-radius: 8px;
+            border-bottom: 3px solid var(--rc);
+            box-shadow: inset 0 -26px 26px -22px var(--rg);
+            overflow: hidden;
+        }
+        .rcard .art { width: 100%; flex: 1; min-height: 0; padding: 0; background: none; border: none; box-shadow: none; aspect-ratio: auto; }
+        .rcard .w { font-size: 10px; font-weight: 600; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rcard .s { font-size: 9px; color: var(--muted); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rcard.win { box-shadow: inset 0 -26px 26px -18px var(--rg), 0 0 16px var(--rg); }
+
+        .notice {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-align: center;
+            padding: 12px;
             background: var(--field);
             border: 1px solid var(--line);
             border-radius: 12px;
-            padding: 10px;
+        }
+        .notice b { font-size: 13px; letter-spacing: 0.02em; }
+
+        .open-row { display: flex; gap: 8px; }
+
+        .fast-btn {
+            flex: 0 0 48px;
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
- 
-        .select-box label {
-            font-size: 11px;
-            color: var(--muted);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
- 
-        select {
+            align-items: center;
+            justify-content: center;
             background: var(--surface-2);
-            color: #fff;
             border: 1px solid var(--line);
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 13px;
-            outline: none;
+            color: var(--muted);
+            border-radius: 12px;
             cursor: pointer;
         }
- 
-        select:disabled { opacity: 0.5; }
- 
-        .upgrade-center {
+        .fast-btn.on { background: var(--soft); color: #111; border-color: var(--soft); }
+        .fast-btn:disabled { opacity: 0.4; }
+
+        .odds { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+        .odds span { display: inline-flex; align-items: center; gap: 5px; }
+        .odds i { width: 8px; height: 8px; border-radius: 2px; background: var(--rc); }
+
+        /* ---------- Окно выигрыша ---------- */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.74);
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 340px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            margin-top: 4px;
-        }
- 
-        .dial {
-            position: relative;
-            width: min(260px, 74vw);
-            height: min(260px, 74vw);
-            --spin: 3600ms;
-        }
- 
-        .dial > svg { width: 100%; height: 100%; display: block; }
- 
-        /* Крутится только стрелка вокруг центра */
-        .pointer-wrapper {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            transition: transform var(--spin) cubic-bezier(0.12, 0.75, 0.15, 1);
-            will-change: transform;
-        }
- 
-        .pointer-wrapper svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-            overflow: visible;
-            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
-        }
- 
-        .dial.win { animation: pop 0.5s ease; }
-        @keyframes pop { 50% { transform: scale(1.03); } }
- 
-        .upgrade-result {
-            font-size: 13px;
-            font-weight: 600;
             text-align: center;
-            min-height: 34px;          /* место под две строки, чтобы кнопка не прыгала */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #c9c9cd;
+            padding: 18px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-top: 3px solid var(--rc);
+            border-radius: 16px;
+            animation: rise 0.28s ease;
         }
-        .upgrade-result.win  { color: #fff; }
-        .upgrade-result.lose { color: var(--muted); }
- 
+        @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+
+        .m-rarity { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rc); }
+        .m-art { width: 100%; }
+        .m-art .art { aspect-ratio: 1.7; padding: 12px; border-radius: 10px 10px 4px 4px; }
+        .m-w { font-size: 16px; font-weight: 700; }
+        .m-s { font-size: 13px; color: var(--muted); margin-top: 2px; }
+        .m-val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .modal-actions { display: flex; gap: 8px; width: 100%; }
+        .modal-actions .btn { flex: 1; }
+
         /* ---------- Время мира ---------- */
-        .clocks {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
- 
+        .clocks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
         .clock {
             background: var(--surface-2);
             border: 1px solid var(--line);
             border-radius: 10px;
             padding: 10px 12px;
         }
- 
-        .clock .city {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--muted);
-        }
- 
+        .clock .city { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: #4a4b4f; }
         .dot.day { background: var(--soft); }
- 
-        .clock .time {
-            margin-top: 4px;
-            font-size: 22px;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-        }
- 
+        .clock .time { margin-top: 4px; font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
         .clock .sub { margin-top: 2px; font-size: 11px; color: var(--muted); }
- 
+
+
+        /* ---------- Вкладки ---------- */
+        .tabs { display: flex; gap: 6px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+        .tabs button { flex: 1; padding: 9px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.15s; }
+        .tabs button.on { background: var(--soft); color: #111; }
+
+        /* ---------- Апгрейдер ---------- */
+        .dial { position: relative; width: min(270px, 76vw); height: min(270px, 76vw); margin: 0 auto; --spin: 4200ms; }
+        .dial > svg { width: 100%; height: 100%; display: block; }
+        .pointer-wrapper { position: absolute; inset: 0; pointer-events: none; transition: transform var(--spin) cubic-bezier(0.12, 0.75, 0.15, 1); will-change: transform; }
+        .pointer-wrapper svg { width: 100%; height: 100%; display: block; overflow: visible; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6)); }
+        .dial.win { animation: pop 0.5s ease; }
+        @keyframes pop { 50% { transform: scale(1.03); } }
+
+        .up-sum { text-align: center; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 16px; }
+        .up-result { text-align: center; font-size: 13px; font-weight: 600; min-height: 18px; color: #c9c9cd; }
+        .up-result.win { color: #8fd3a8; }
+        .up-result.lose { color: #e59a9a; }
+
+        .up-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .up-panel { background: var(--field); border: 1px solid var(--line); border-radius: 12px; padding: 8px; min-height: 132px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .up-panel .ph { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 10.5px; line-height: 1.25; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+        .up-panel .ph button { flex: none; padding: 4px 8px; font-size: 10px; border-radius: 7px; }
+        .up-stack { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .up-hint { margin: auto; text-align: center; font-size: 11px; color: var(--muted); padding: 6px; }
+        .bal-chip { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 7px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+        .bal-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--field); border: 1px solid var(--line); border-radius: 12px; }
+        .bal-row .lbl { font-size: 10.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+        .bal-row input[type=range] { flex: 1; min-width: 0; accent-color: #e4e4e7; }
+        .bal-row .val { min-width: 54px; text-align: right; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        .mults { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+        .mults button { padding: 10px 0; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); color: var(--muted); font-size: 12px; font-weight: 700; cursor: pointer; }
+        .mults button:active { background: var(--soft); color: #111; }
+        .mults button.on { background: var(--soft); color: #111; border-color: var(--soft); }
+        .mults button:disabled { opacity: 0.4; }
+
+        .up-go { letter-spacing: 0.18em; text-transform: uppercase; padding: 15px; font-size: 15px; font-weight: 800; }
+
+        .filters { display: flex; gap: 6px; }
+        .fld { flex: 1; min-width: 0; padding: 9px 10px; background: var(--field); border: 1px solid var(--line); border-radius: 10px; color: #fff; font-size: 12px; outline: none; }
+        .fld:focus { border-color: var(--muted); }
+        .sort-btn { flex: 0 0 38px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; color: #fff; font-size: 14px; cursor: pointer; }
+
+        .pick { cursor: pointer; position: relative; }
+        .pick .art { transition: box-shadow 0.15s; }
+        .pick.on .art { outline: 2px solid var(--soft); outline-offset: -2px; }
+        .pick .pv { font-size: 10.5px; font-weight: 600; color: var(--soft); font-variant-numeric: tabular-nums; }
+        .pick:active { opacity: 0.8; }
+        .grid-scroll { max-height: 420px; overflow-y: auto; padding-right: 2px; }
+        .empty-up { text-align: center; padding: 14px 6px; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+
+        @media (prefers-reduced-motion: reduce) { .dial.win { animation: none; } }
+
         @media (prefers-reduced-motion: reduce) {
-            .dial.win { animation: none; }
+            .balance.bump, .modal-card { animation: none; }
         }
     </style>
 </head>
 <body>
     <canvas id="sky"></canvas>
- 
+
     <header>
         <div class="logo-area">
             <div class="logo">m1vlirapp</div>
             <div class="world-time" id="localTime">--:--:--</div>
         </div>
-        <button class="lang-btn" id="langToggleBtn" type="button">RU</button>
-    </header>
- 
-    <main>
-        <!-- Предложить идею -->
-        <div class="card">
-            <h2 id="cardTitle"></h2>
-            <p id="cardDesc"></p>
-            <textarea id="ideaInput"></textarea>
-            <button class="submit-btn" id="sendBtn" type="button"></button>
-            <div class="status-toast" id="statusToast"></div>
-        </div>
- 
-        <!-- Апгрейдер -->
-        <div class="card">
-            <h2 id="upTitle"></h2>
-            <div class="upgrade-grid">
-                <div class="select-box">
-                    <label id="fromLabel" for="fromItem"></label>
-                    <select id="fromItem">
-                        <option value="67">Шмотка [67]</option>
-                        <option value="1000">Мем [1000-7]</option>
-                    </select>
-                </div>
-                <div class="select-box">
-                    <label id="toLabel" for="toItem"></label>
-                    <select id="toItem">
-                        <option value="69">Шмотка [69]</option>
-                        <option value="228">Шмотка [228]</option>
-                    </select>
-                </div>
+        <div class="header-right">
+            <div class="balance" id="balance">
+                <span id="balanceVal">0</span><span data-coin></span>
+                <button class="plus" id="plusBtn" type="button" aria-label="+">+</button>
             </div>
- 
-            <div class="upgrade-center">
+            <button class="lang-btn" id="langToggleBtn" type="button">RU</button>
+        </div>
+    </header>
+
+    <main>
+        <nav class="tabs" id="tabs">
+            <button type="button" data-tab="home" class="on" id="tabHome"></button>
+            <button type="button" data-tab="up" id="tabUp"></button>
+        </nav>
+
+        <!-- ============ ГЛАВНАЯ ============ -->
+        <section class="view" id="viewHome">
+            <div class="card">
+                <h2 id="casesTitle"></h2>
+                <div class="cases-grid" id="casesGrid"></div>
+                <p id="demoNote"></p>
+            </div>
+
+            <div class="card" id="invCard">
+                <div class="row">
+                    <h2 id="invTitle"></h2>
+                    <button class="ghost-btn" id="sellAllBtn" type="button" hidden></button>
+                </div>
+                <div class="items-grid" id="invGrid"></div>
+                <p id="invEmpty"></p>
+            </div>
+
+            <!-- Предложить идею -->
+            <div class="card">
+                <h2 id="cardTitle"></h2>
+                <p id="cardDesc"></p>
+                <textarea id="ideaInput"></textarea>
+                <button class="btn" id="sendBtn" type="button"></button>
+                <div class="status-toast" id="statusToast"></div>
+            </div>
+
+            <!-- Время мира -->
+            <div class="card">
+                <h2 id="clocksTitle"></h2>
+                <div class="clocks" id="clocks"></div>
+            </div>
+        </section>
+
+        <!-- ============ СТРАНИЦА КЕЙСА ============ -->
+        <section class="view" id="viewCase" hidden>
+            <div class="topbar">
+                <button class="ghost-btn" id="backBtn" type="button"><span>←</span><span id="backTxt"></span></button>
+                <button class="ghost-btn" id="soundBtn" type="button" aria-label="sound"></button>
+            </div>
+
+            <div class="card">
+                <div class="stage" id="stage">
+                    <div class="big-crate" id="bigCrate"></div>
+                    <div class="roulette" id="roulette">
+                        <div class="marker"></div>
+                        <div class="track" id="track"></div>
+                    </div>
+                </div>
+                <h2 class="center" id="caseName"></h2>
+
+                <div class="notice" id="notice" hidden>
+                    <b id="noticeTitle"></b>
+                    <p id="noticeText"></p>
+                    <button class="btn small" id="topUpBtn" type="button"></button>
+                </div>
+
+                <div class="open-row">
+                    <button class="fast-btn" id="fastBtn" type="button" aria-label="fast"></button>
+                    <button class="btn" id="openBtn" type="button"></button>
+                </div>
+                <div class="odds" id="odds"></div>
+            </div>
+
+            <div class="card">
+                <h2 id="contentsTitle"></h2>
+                <div class="items-grid" id="contentsGrid"></div>
+            </div>
+        </section>
+
+        <!-- ============ АПГРЕЙДЕР ============ -->
+        <section class="view" id="viewUp" hidden>
+            <div class="card">
+                <h2 class="center" id="upTitle"></h2>
                 <div class="dial" id="dial">
                     <svg viewBox="0 0 260 260" aria-hidden="true">
                         <defs>
@@ -359,48 +614,105 @@
                         <path id="zone" fill="url(#zoneGrad)" stroke="#e4e4e7" stroke-opacity="0.35" stroke-width="1"/>
                         <circle cx="130" cy="130" r="58" fill="#101012" stroke="#2e2e32" stroke-width="2"/>
                         <polygon points="130,80 173.3,105 173.3,155 130,180 86.7,155 86.7,105" fill="none" stroke="#26262a" stroke-width="2"/>
-                        <text id="chanceText" x="130" y="136" text-anchor="middle" font-size="24" font-weight="700" fill="#f1f1f2">0%</text>
-                        <text id="chanceLabel" x="130" y="152" text-anchor="middle" font-size="7.5" letter-spacing="1" fill="#8b8d91"></text>
+                        <text id="chanceText" x="130" y="136" text-anchor="middle" font-size="22" font-weight="700" fill="#f1f1f2">0.00%</text>
+                        <text id="chanceLabel" x="130" y="152" text-anchor="middle" font-size="6.5" letter-spacing="1" fill="#8b8d91"></text>
                     </svg>
                     <div class="pointer-wrapper" id="pointerWrapper">
-                        <svg viewBox="0 0 260 260">
-                            <polygon points="130,222 119,241 141,241" fill="#ececee" stroke="#0d0d0e" stroke-width="1.5" stroke-linejoin="round"/>
-                        </svg>
+                        <svg viewBox="0 0 260 260"><polygon points="130,222 119,241 141,241" fill="#ececee" stroke="#0d0d0e" stroke-width="1.5" stroke-linejoin="round"/></svg>
                     </div>
                 </div>
-                <div class="upgrade-result" id="upgradeResult"></div>
-                <button class="upgrade-btn" id="upgradeBtn" type="button">UPGRADE</button>
+                <div class="up-sum" id="upSum"></div>
+
+                <div class="up-panels">
+                    <div class="up-panel">
+                        <div class="ph"><span id="upLeftT"></span><button class="ghost-btn" id="upClearL" type="button"></button></div>
+                        <div class="up-stack" id="upLeft"></div>
+                    </div>
+                    <div class="up-panel">
+                        <div class="ph"><span id="upRightT"></span><button class="ghost-btn" id="upClearR" type="button"></button></div>
+                        <div class="up-stack" id="upRight"></div>
+                    </div>
+                </div>
+
+                <div class="bal-row">
+                    <span class="lbl" id="balLbl"></span>
+                    <input type="range" id="balRange" min="0" max="0" step="1" value="0">
+                    <span class="val" id="balVal"></span>
+                </div>
+
+                <div class="mults" id="mults">
+                    <button type="button" data-m="x2">x2</button>
+                    <button type="button" data-m="x5">x5</button>
+                    <button type="button" data-m="x10">x10</button>
+                    <button type="button" data-m="p30">30%</button>
+                    <button type="button" data-m="p50">50%</button>
+                    <button type="button" data-m="p75">75%</button>
+                </div>
+
+                <button class="btn up-go" id="upBtn" type="button"></button>
+                <div class="up-result" id="upResult"></div>
+            </div>
+
+            <div class="card">
+                <div class="row">
+                    <h2 id="myItemsT"></h2>
+                    <button class="sort-btn" id="invSort" type="button" aria-label="sort"></button>
+                </div>
+                <div class="grid-scroll"><div class="items-grid" id="upInv"></div></div>
+            </div>
+
+            <div class="card">
+                <h2 id="selItemT"></h2>
+                <div class="filters">
+                    <input class="fld" id="fFrom" type="number" min="0" inputmode="numeric">
+                    <input class="fld" id="fTo" type="number" min="0" inputmode="numeric">
+                    <button class="sort-btn" id="catSort" type="button" aria-label="sort"></button>
+                </div>
+                <input class="fld" id="fQ" type="text" autocomplete="off">
+                <div class="grid-scroll"><div class="items-grid" id="upCat"></div></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Окно выигрыша -->
+    <div class="modal" id="modal" hidden>
+        <div class="modal-card" id="modalCard">
+            <div class="m-rarity" id="mRarity"></div>
+            <div class="m-art" id="mArt"></div>
+            <div>
+                <div class="m-w" id="mW"></div>
+                <div class="m-s" id="mS"></div>
+            </div>
+            <div class="m-val" id="mVal"></div>
+            <div class="modal-actions">
+                <button class="btn ghost" id="keepBtn" type="button"></button>
+                <button class="btn" id="sellBtn" type="button"></button>
             </div>
         </div>
- 
-        <!-- Время мира -->
-        <div class="card">
-            <h2 id="clocksTitle"></h2>
-            <div class="clocks" id="clocks"></div>
-        </div>
-    </main>
- 
+    </div>
+
 <script>
 (function () {
     'use strict';
- 
+
     /* Фон: 'snow' | 'stars' | 'both' */
     const MODE = 'both';
- 
+
     const tg = window.Telegram && window.Telegram.WebApp;
     const $ = (id) => document.getElementById(id);
- 
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
     const haptic = {
         impact(s) { try { tg.HapticFeedback.impactOccurred(s); } catch (e) {} },
         notify(t) { try { tg.HapticFeedback.notificationOccurred(t); } catch (e) {} },
         select()  { try { tg.HapticFeedback.selectionChanged(); } catch (e) {} }
     };
- 
+
     if (tg) {
         try { tg.ready(); tg.expand(); } catch (e) {}
         try { tg.setHeaderColor('#111213'); tg.setBackgroundColor('#111213'); } catch (e) {}
     }
- 
+
     /* ================= ТЕКСТЫ ================= */
     const T = {
         ru: {
@@ -413,13 +725,28 @@
             testSuffix: ' (тест)',
             empty: 'Напиши текст идеи!',
             fail: 'Ошибка отправки',
-            upTitle: '🎰 Рофл Апгрейдер',
-            from: 'Твой предмет (Деп)',
-            to: 'На что апаем',
-            init: 'Выбери вещи и крути апгрейд',
-            spinning: 'Крутим стрелку...',
-            win: '✅ УСПЕХ! Стрелка в зоне! Заапгрейдил до [{to}]!',
-            lose: '❌ ПРОЕБАЛ! Стрелка мимо зоны. Шмотка сгорела.',
+            casesTitle: 'Кейсы',
+            demoNote: 'Виртуальные монеты — просто для фана, реальных денег тут нет.',
+            back: 'К кейсам',
+            contents: 'Содержимое кейса',
+            open: 'Открыть за',
+            notEnough: 'Не хватает',
+            insufficient: 'Недостаточно монет, чтобы открыть кейс',
+            topUp: 'Пополнить баланс',
+            inventory: 'Инвентарь',
+            invEmpty: 'Пока пусто — открой кейс',
+            sellAll: 'Продать всё',
+            sell: 'Продать за',
+            keep: 'Оставить',
+            rar: { mil: 'Армейское качество', res: 'Запрещённое', cla: 'Засекреченное', cov: 'Тайное', gold: 'Редкий особый предмет' },
+            tabHome: 'Кейсы', tabUp: 'Апгрейдер', upTitle: 'Апгрейдер',
+            upLeftT: 'Твои предметы и баланс', upRightT: 'Цель', clear: 'Сбросить',
+            balLbl: 'Баланс', upgrade: 'Апгрейд', myItems: 'Мои предметы', selItem: 'Выбор цели',
+            from: 'От', to: 'До', search: 'Поиск по названию',
+            upHintL: 'Выбери предметы ниже и/или добавь баланс', upHintR: 'Выбери предмет для апгрейда',
+            upInit: 'Выбери ставку и цель', upSpin: 'Крутим стрелку...',
+            upWin: 'Успех! Получил: {n}', upLose: 'Мимо зоны — ставка сгорела',
+            upEmptyInv: 'Инвентарь пуст — открой кейс', goCases: 'К кейсам', bet: 'Ставка', target: 'Цель',
             chLow: 'Низкий шанс', chMid: 'Средний шанс', chHigh: 'Высокий шанс',
             clocks: 'Время мира',
             day: 'день', night: 'ночь',
@@ -435,13 +762,28 @@
             testSuffix: ' (тест)',
             empty: 'Напиши текст ідеї!',
             fail: 'Помилка надсилання',
-            upTitle: '🎰 Рофл Апгрейдер',
-            from: 'Твій предмет (Деп)',
-            to: 'На що апаємо',
-            init: 'Вибери речі та крути апгрейд',
-            spinning: 'Крутимо стрілку...',
-            win: '✅ УСПІХ! Стрілка в зоні! Заапгрейдив до [{to}]!',
-            lose: '❌ ПРОЇБАВ! Стрілка повз зону. Шмотка згоріла.',
+            casesTitle: 'Кейси',
+            demoNote: 'Віртуальні монети — просто для фану, реальних грошей тут немає.',
+            back: 'До кейсів',
+            contents: 'Вміст кейса',
+            open: 'Відкрити за',
+            notEnough: 'Не вистачає',
+            insufficient: 'Недостатньо монет, щоб відкрити кейс',
+            topUp: 'Поповнити баланс',
+            inventory: 'Інвентар',
+            invEmpty: 'Поки порожньо — відкрий кейс',
+            sellAll: 'Продати все',
+            sell: 'Продати за',
+            keep: 'Залишити',
+            rar: { mil: 'Армійська якість', res: 'Заборонене', cla: 'Засекречене', cov: 'Таємне', gold: 'Рідкісний особливий предмет' },
+            tabHome: 'Кейси', tabUp: 'Апгрейдер', upTitle: 'Апгрейдер',
+            upLeftT: 'Твої предмети та баланс', upRightT: 'Ціль', clear: 'Скинути',
+            balLbl: 'Баланс', upgrade: 'Апгрейд', myItems: 'Мої предмети', selItem: 'Вибір цілі',
+            from: 'Від', to: 'До', search: 'Пошук за назвою',
+            upHintL: 'Вибери предмети нижче та/або додай баланс', upHintR: 'Вибери предмет для апгрейду',
+            upInit: 'Вибери ставку та ціль', upSpin: 'Крутимо стрілку...',
+            upWin: 'Успіх! Отримав: {n}', upLose: 'Повз зону — ставка згоріла',
+            upEmptyInv: 'Інвентар порожній — відкрий кейс', goCases: 'До кейсів', bet: 'Ставка', target: 'Ціль',
             chLow: 'Низький шанс', chMid: 'Середній шанс', chHigh: 'Високий шанс',
             clocks: 'Світовий час',
             day: 'день', night: 'ніч',
@@ -457,22 +799,37 @@
             testSuffix: ' (test)',
             empty: 'Write your idea first!',
             fail: 'Send error',
-            upTitle: '🎰 Rofl Upgrader',
-            from: 'Your item (Dep)',
-            to: 'Upgrade into',
-            init: 'Pick items and spin the upgrade',
-            spinning: 'Spinning the pointer...',
-            win: '✅ SUCCESS! The pointer is in the zone! Upgraded to [{to}]!',
-            lose: '❌ LOST! The pointer missed the zone. The item is gone.',
+            casesTitle: 'Cases',
+            demoNote: 'Virtual coins, just for fun — no real money here.',
+            back: 'Back to cases',
+            contents: 'Case contents',
+            open: 'Open for',
+            notEnough: 'Not enough',
+            insufficient: 'Insufficient coins to open the case',
+            topUp: 'Top up balance',
+            inventory: 'Inventory',
+            invEmpty: 'Empty for now — open a case',
+            sellAll: 'Sell all',
+            sell: 'Sell for',
+            keep: 'Keep',
+            rar: { mil: 'Mil-Spec', res: 'Restricted', cla: 'Classified', cov: 'Covert', gold: 'Rare Special Item' },
+            tabHome: 'Cases', tabUp: 'Upgrader', upTitle: 'Upgrader',
+            upLeftT: 'Your items and balance', upRightT: 'Target', clear: 'Clear',
+            balLbl: 'Balance', upgrade: 'Upgrade', myItems: 'My items', selItem: 'Select target',
+            from: 'From', to: 'To', search: 'Search by name',
+            upHintL: 'Pick items below and/or add balance', upHintR: 'Pick an item to upgrade into',
+            upInit: 'Pick a stake and a target', upSpin: 'Spinning the pointer...',
+            upWin: 'Success! You got: {n}', upLose: 'Missed the zone — stake burned',
+            upEmptyInv: 'Inventory is empty — open a case', goCases: 'To cases', bet: 'Stake', target: 'Target',
             chLow: 'Low chance', chMid: 'Medium chance', chHigh: 'High chance',
             clocks: 'World time',
             day: 'day', night: 'night',
             today: 'today', tomorrow: 'tomorrow', yesterday: 'yesterday'
         }
     };
- 
+
     const LANGS = ['ru', 'ua', 'en'];
- 
+
     function detectLang() {
         try {
             const s = localStorage.getItem('mv_lang');
@@ -486,9 +843,601 @@
         code = String(code).toLowerCase().slice(0, 2);
         return code === 'uk' ? 'ua' : (code === 'en' ? 'en' : 'ru');
     }
- 
+
     let lang = detectLang();
- 
+
+    /* ================= ИКОНКИ ================= */
+    const COIN = '<svg class="coin" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l6 3.5v7L8 15l-6-3.5v-7z" fill="#d4d4d8"/><path d="M8 4.8l3.2 1.9v3.6L8 12.2 4.8 10.3V6.7z" fill="#18191b"/></svg>';
+    const ICON_SOUND_ON  = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    const ICON_SOUND_OFF = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    const ICON_BOLT      = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>';
+
+    /* ================= МОДЕЛЬКИ ОРУЖИЯ (SVG, нарисованы с нуля) =================
+       Роли деталей: b — корпус (цвет 1), s — вторичные детали (цвет 2), d — тёмный металл,
+       a — линза/акцент, k — тёмные линии, l — блик. Направление: дульный срез справа. */
+    const LIB = {
+        pistol: {
+            vb: '44 12 152 62',
+            parts: [
+                ['d', 'M146 29h12v6h-12z'],
+                ['s', 'M55 38h80v6h-26l-5 6H90l-5-5-7 21H57z'],
+                ['b', 'M52 24h96l4 4v10H52z'],
+                ['d', 'M52 21h7v3h-7z'],
+                ['d', 'M141 21h7v3h-7z'],
+                ['k', 'M88 44q0 11 11 11h8'],
+                ['k', 'M59 52l-3 12M65 52l-3 12M71 52l-3 12'],
+                ['k', 'M57 28v7M61 28v7M65 28v7'],
+                ['l', 'M60 26h84']
+            ],
+            sup: [['d', 'M158 27h34v10h-34z'], ['l', 'M161 29.5h28']]
+        },
+        smg: {
+            vb: '10 10 172 66',
+            parts: [
+                ['d', 'M20 30h40v5H20z'],
+                ['d', 'M16 27h7v14h-7z'],
+                ['d', 'M148 32h24v5h-24z'],
+                ['d', 'M170 29h7v11h-7z'],
+                ['s', 'M96 46h15l-2 30H91z'],
+                ['s', 'M64 46h14l-4 24H59z'],
+                ['b', 'M60 26h82l8 5v15H60z'],
+                ['d', 'M66 21h60v5H66z'],
+                ['d', 'M124 16h7v5h-7z'],
+                ['k', 'M80 46q0 9 9 9h7'],
+                ['k', 'M70 33h30'],
+                ['l', 'M62 28h78']
+            ]
+        },
+        p90: {
+            vb: '24 10 166 62',
+            parts: [
+                ['d', 'M30 30h8v18h-8z'],
+                ['b', 'M38 28h112l9 7v12H38z'],
+                ['s', 'M48 19h78l4 9H46z'],
+                ['s', 'M94 47h13l-3 20H90z'],
+                ['d', 'M158 36h26v4h-26z'],
+                ['d', 'M130 16h9v5h-9z'],
+                ['k', 'M80 47q0 8 8 8h6'],
+                ['k', 'M44 38h100'],
+                ['l', 'M40 30h108']
+            ]
+        },
+        rifle: {
+            vb: '0 14 196 60',
+            parts: [
+                ['s', 'M8 33h38l5 4v9H11l-5-5z'],
+                ['d', 'M46 32h6v8h-6z'],
+                ['d', 'M146 34h36v4h-36z'],
+                ['d', 'M158 28h4v7h-4z'],
+                ['d', 'M180 31h9v9h-9z'],
+                ['s', 'M108 30h38v12h-38z'],
+                ['b', 'M50 28h58v15H50z'],
+                ['s', 'M58 43h13l-6 22H51z'],
+                ['d', 'M52 24h42v4H52z'],
+                ['d', 'M112 25h8v5h-8z'],
+                ['k', 'M74 43q0 9 9 9h4'],
+                ['l', 'M54 30h52']
+            ],
+            mag: {
+                curved:   [['d', 'M80 43h17l9 17q3 8-5 8H93q-6-2-8-12z']],
+                straight: [['d', 'M82 43h15l-1 24H81z']]
+            },
+            sup: [['d', 'M168 30h28v11h-28z'], ['l', 'M171 32.5h22']]
+        },
+        sniper: {
+            vb: '0 10 198 62',
+            parts: [
+                ['s', 'M4 34h48l7 8v10H10z'],
+                ['d', 'M126 37h60v5h-60z'],
+                ['d', 'M182 34h12v11h-12z'],
+                ['b', 'M52 33h74v12H52z'],
+                ['d', 'M66 19h56v9H66z'],
+                ['d', 'M62 19h6v9h-6z'],
+                ['d', 'M76 28h5v5h-5zM108 28h5v5h-5z'],
+                ['d', 'M92 45h14v9H92z'],
+                ['s', 'M60 45h12l-4 20H55z'],
+                ['a', 'M120 18h7v11h-7z'],
+                ['k', 'M74 45q0 9 9 9h4'],
+                ['k', 'M100 33v-6h7'],
+                ['l', 'M54 35h70']
+            ]
+        },
+        shotgun: {
+            vb: '0 18 194 52',
+            parts: [
+                ['s', 'M4 34h44l6 8v9H10z'],
+                ['d', 'M96 34h88v5H96z'],
+                ['d', 'M96 41h66v4H96z'],
+                ['d', 'M180 32h8v9h-8z'],
+                ['d', 'M178 28h4v6h-4z'],
+                ['b', 'M48 32h48v13H48z'],
+                ['s', 'M112 40h30v9h-30z'],
+                ['s', 'M58 45h12l-4 18H54z'],
+                ['k', 'M72 45q0 8 8 8h4'],
+                ['l', 'M50 34h44']
+            ]
+        },
+        knife: {
+            vb: '10 6 140 70',
+            parts: [
+                ['s', 'M38 32h40l-4 18H34z'],
+                ['b', 'M76 32C108 12 150 26 140 70C128 48 104 44 74 50z'],
+                ['k', 'M21 42a9 9 0 1 0 18 0a9 9 0 1 0-18 0'],
+                ['k', 'M44 34v14M52 34v14M60 34v14'],
+                ['l', 'M84 33C110 20 136 30 134 58']
+            ]
+        }
+    };
+
+    function hexRgb(h) { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
+    function lerpHex(a, b, t) {
+        const x = hexRgb(a), y = hexRgb(b);
+        return 'rgb(' + x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(',') + ')';
+    }
+    function mulberry(seed) {
+        let a = seed >>> 0;
+        return function () {
+            a = (a + 0x6D2B79F5) >>> 0;
+            let t = a;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    function skinPattern(it) {
+        const acc = it.acc || '#ffffff';
+        const rnd = mulberry(it.id * 977 + 13);
+        let s = '';
+        switch (it.p) {
+            case 'stripes':
+                for (let k = -1; k < 10; k++) s += '<path d="M' + (k * 26) + ' 0h9l-26 90h-9z" fill="' + acc + '" fill-opacity=".85"/>';
+                break;
+            case 'camo':
+                for (let k = 0; k < 11; k++) {
+                    s += '<ellipse cx="' + (rnd() * 200).toFixed(1) + '" cy="' + (10 + rnd() * 60).toFixed(1) +
+                         '" rx="' + (8 + rnd() * 14).toFixed(1) + '" ry="' + (5 + rnd() * 8).toFixed(1) +
+                         '" fill="' + (k % 2 ? it.c2 : acc) + '" fill-opacity=".75"/>';
+                }
+                break;
+            case 'dots':
+                for (let y = 18, r = 0; y < 76; y += 11, r++) {
+                    for (let x = 6 + (r % 2) * 6; x < 200; x += 12) s += '<circle cx="' + x + '" cy="' + y + '" r="2.4" fill="' + acc + '" fill-opacity=".8"/>';
+                }
+                break;
+            case 'flames':
+                for (let k = 0; k < 14; k++) {
+                    const x = k * 15, h1 = (28 + rnd() * 26).toFixed(1), h2 = (22 + rnd() * 20).toFixed(1);
+                    s += '<path d="M' + x + ' 80Q' + (x + 4) + ' ' + h1 + ' ' + (x + 8) + ' ' + h2 + 'Q' + (x + 12) + ' 46 ' + (x + 15) + ' 80z" fill="' + acc + '" fill-opacity=".85"/>';
+                }
+                break;
+            case 'scales':
+                for (let y = 14, r = 0; y < 84; y += 8, r++) {
+                    for (let x = 4 + (r % 2) * 7; x < 204; x += 14) s += '<circle cx="' + x + '" cy="' + y + '" r="7" fill="none" stroke="' + acc + '" stroke-opacity=".55" stroke-width="1.3"/>';
+                }
+                break;
+            case 'fade':
+                for (let i = 0; i < 20; i++) s += '<rect x="' + (i * 10) + '" y="0" width="10.5" height="90" fill="' + lerpHex(it.c1, it.c2, i / 19) + '"/>';
+                break;
+        }
+        return s;
+    }
+
+    function weaponSVG(it, uid) {
+        const lib = LIB[it.t];
+        let parts = lib.parts.slice();
+        const o = it.o || {};
+        if (o.mag && lib.mag && lib.mag[o.mag]) parts = parts.concat(lib.mag[o.mag]);
+        if (o.sup && lib.sup) parts = parts.concat(lib.sup);
+
+        const col = { b: it.c1, s: it.c2, d: '#2a2b2f', a: it.acc || '#8ec5ff' };
+        const by = (r) => parts.filter((p) => p[0] === r);
+        let out = '';
+
+        ['d', 's', 'b'].forEach((r) => {
+            by(r).forEach((p) => {
+                out += '<path d="' + p[1] + '" fill="' + col[r] + '" stroke="#0b0b0d" stroke-opacity=".55" stroke-width="1"/>';
+            });
+        });
+
+        const clip = '<clipPath id="' + uid + '">' +
+            parts.filter((p) => p[0] === 'b' || p[0] === 's').map((p) => '<path d="' + p[1] + '"/>').join('') + '</clipPath>';
+        out += '<g clip-path="url(#' + uid + ')">' + skinPattern(it) + '</g>';
+
+        by('a').forEach((p) => { out += '<path d="' + p[1] + '" fill="' + col.a + '" fill-opacity=".9"/>'; });
+        by('k').forEach((p) => { out += '<path d="' + p[1] + '" fill="none" stroke="#141416" stroke-opacity=".85" stroke-width="2" stroke-linecap="round"/>'; });
+        by('l').forEach((p) => { out += '<path d="' + p[1] + '" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.2" stroke-linecap="round"/>'; });
+
+        return '<svg viewBox="' + lib.vb + '" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><defs>' + clip + '</defs>' + out + '</svg>';
+    }
+
+    /* Кейс: свой контейнер (серый), без чужих логотипов */
+    const CRATE = '<svg viewBox="0 0 240 170" aria-hidden="true">' +
+        '<ellipse cx="120" cy="156" rx="92" ry="8" fill="#000" fill-opacity=".35"/>' +
+        '<path d="M36 50h168l16 20H20z" fill="#44454a" stroke="#5a5b60"/>' +
+        '<rect x="20" y="70" width="200" height="78" rx="4" fill="#2b2c30" stroke="#4a4b50"/>' +
+        '<rect x="20" y="70" width="200" height="19" fill="#36373c"/>' +
+        '<path d="M20 89h200" stroke="#17181a" stroke-width="2"/>' +
+        '<rect x="40" y="94" width="10" height="48" rx="2" fill="#232428"/>' +
+        '<rect x="190" y="94" width="10" height="48" rx="2" fill="#232428"/>' +
+        '<rect x="63" y="80" width="15" height="24" rx="2" fill="#8b8d91" stroke="#17181a"/>' +
+        '<rect x="162" y="80" width="15" height="24" rx="2" fill="#8b8d91" stroke="#17181a"/>' +
+        '<rect x="8" y="98" width="14" height="28" rx="5" fill="none" stroke="#6b6c71" stroke-width="3"/>' +
+        '<rect x="218" y="98" width="14" height="28" rx="5" fill="none" stroke="#6b6c71" stroke-width="3"/>' +
+        '<rect x="82" y="100" width="76" height="38" rx="3" fill="#18191b" stroke="#5a5b60"/>' +
+        '<path d="M120 104l7 4v7l-7 4-7-4v-7z" fill="none" stroke="#8b8d91" stroke-width="1.5"/>' +
+        '<text x="120" y="132" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="15" font-weight="800" letter-spacing="2.5" fill="#e4e4e7">MIVFIX</text>' +
+        '<circle cx="30" cy="80" r="2" fill="#6b6c71"/><circle cx="210" cy="80" r="2" fill="#6b6c71"/>' +
+        '<circle cx="30" cy="140" r="2" fill="#6b6c71"/><circle cx="210" cy="140" r="2" fill="#6b6c71"/>' +
+        '<path d="M38 52h164" stroke="#fff" stroke-opacity=".18" stroke-width="1.5"/>' +
+        '</svg>';
+
+    /* ================= КЕЙС И СКИНЫ ================= */
+    const CASE = { name: 'mivfix', price: 39 };
+    const TOPUP = 100;
+
+    const RAR = { mil: 79.92, res: 15.98, cla: 3.2, cov: 0.64, gold: 0.26 };   // шансы, %
+    const RAR_DESC = ['gold', 'cov', 'cla', 'res', 'mil'];
+
+    const RAW = [
+        // Rare Special Item
+        { w: '★ Karambit',      n: 'Fade',            r: 'gold', t: 'knife',   v: 2400, c1: '#f0b24a', c2: '#d94f8c', p: 'fade' },
+        { w: '★ Karambit',      n: 'Slaughter',       r: 'gold', t: 'knife',   v: 1800, c1: '#b04a3a', c2: '#6d2a22', acc: '#e8a07a', p: 'camo' },
+        // Covert
+        { w: 'AWP',             n: 'Dragon Lore',     r: 'cov',  t: 'sniper',  v: 700,  c1: '#c8a24a', c2: '#3a4a2a', acc: '#e8d28a', p: 'scales' },
+        { w: 'AK-47',           n: 'Fire Serpent',    r: 'cov',  t: 'rifle',   v: 420,  c1: '#c4521c', c2: '#3a2418', acc: '#f3a23a', p: 'flames', o: { mag: 'curved' } },
+        { w: 'AWP',             n: 'Asiimov',         r: 'cov',  t: 'sniper',  v: 520,  c1: '#e8e8ea', c2: '#d9622b', acc: '#1d1d1f', p: 'stripes' },
+        // Classified
+        { w: 'AK-47',           n: 'Redline',         r: 'cla',  t: 'rifle',   v: 150,  c1: '#1f1f22', c2: '#2a1d1a', acc: '#d93636', p: 'stripes', o: { mag: 'curved' } },
+        { w: 'M4A1-S',          n: 'Hyper Beast',     r: 'cla',  t: 'rifle',   v: 120,  c1: '#5b8c3a', c2: '#2a2a2e', acc: '#e0d24a', p: 'camo', o: { mag: 'straight', sup: true } },
+        { w: 'P90',             n: 'Asiimov',         r: 'cla',  t: 'p90',     v: 95,   c1: '#e8e8ea', c2: '#d9622b', acc: '#1d1d1f', p: 'stripes' },
+        { w: 'Desert Eagle',    n: 'Blaze',           r: 'cla',  t: 'pistol',  v: 85,   c1: '#e86a1c', c2: '#8a2a10', acc: '#ffd23a', p: 'flames' },
+        { w: 'USP-S',           n: 'Kill Confirmed',  r: 'cla',  t: 'pistol',  v: 80,   c1: '#2a2a2e', c2: '#1d1d20', acc: '#d9d9dc', p: 'dots', o: { sup: true } },
+        // Restricted
+        { w: 'M4A4',            n: 'Neo-Noir',        r: 'res',  t: 'rifle',   v: 38,   c1: '#2b2840', c2: '#1a1a22', acc: '#b45cf0', p: 'stripes', o: { mag: 'straight' } },
+        { w: 'Glock-18',        n: 'Fade',            r: 'res',  t: 'pistol',  v: 40,   c1: '#e8a84a', c2: '#d94f8c', p: 'fade' },
+        { w: 'MAC-10',          n: 'Neon Rider',      r: 'res',  t: 'smg',     v: 30,   c1: '#6a2bd0', c2: '#1d1d28', acc: '#3de0c8', p: 'stripes' },
+        { w: 'UMP-45',          n: 'Primal Saber',    r: 'res',  t: 'smg',     v: 28,   c1: '#b8863a', c2: '#2a2a2a', acc: '#e8c27a', p: 'scales' },
+        { w: 'SSG 08',          n: 'Blood in the Water', r: 'res', t: 'sniper', v: 34,  c1: '#a82a2a', c2: '#3a3a3e', acc: '#e8e8ea', p: 'camo' },
+        { w: 'SG 553',          n: 'Pulse',           r: 'res',  t: 'rifle',   v: 26,   c1: '#3a7bd5', c2: '#1a1a22', acc: '#9fd0ff', p: 'stripes', o: { mag: 'straight' } },
+        // Mil-Spec
+        { w: 'Five-SeveN',      n: 'Case Hardened',   r: 'mil',  t: 'pistol',  v: 14,   c1: '#3c5fa0', c2: '#7a5a30', acc: '#8ab0e8', p: 'camo' },
+        { w: 'P250',            n: 'Sand Dune',       r: 'mil',  t: 'pistol',  v: 6,    c1: '#b79b6a', c2: '#8a7348', p: 'none' },
+        { w: 'MP9',             n: 'Hot Rod',         r: 'mil',  t: 'smg',     v: 12,   c1: '#d3282e', c2: '#1c1c1f', p: 'none' },
+        { w: 'FAMAS',           n: 'Roll Cage',       r: 'mil',  t: 'rifle',   v: 9,    c1: '#3d6a3a', c2: '#222226', acc: '#e8d22a', p: 'stripes', o: { mag: 'straight' } },
+        { w: 'Nova',            n: 'Bloomstone',      r: 'mil',  t: 'shotgun', v: 8,    c1: '#6f8f4a', c2: '#3a4a2a', acc: '#d8e8a8', p: 'camo' },
+        { w: 'XM1014',          n: 'Blue Steel',      r: 'mil',  t: 'shotgun', v: 7,    c1: '#4a6a9a', c2: '#2a2f3a', p: 'none' },
+        { w: 'Tec-9',           n: 'Bamboozle',       r: 'mil',  t: 'pistol',  v: 11,   c1: '#7fc23a', c2: '#2a2a2a', acc: '#1d1d1f', p: 'stripes' },
+        { w: 'Galil AR',        n: 'Eco',             r: 'mil',  t: 'rifle',   v: 10,   c1: '#3a8a6a', c2: '#222226', acc: '#bfe8d4', p: 'dots', o: { mag: 'curved' } }
+    ];
+    const ITEMS = RAW.map((x, i) => Object.assign({ id: i }, x));
+    const ITEMS_SORTED = RAR_DESC.reduce((a, k) => a.concat(ITEMS.filter((i) => i.r === k)), []);
+
+    /* Бросок: сначала редкость по шансам, потом случайный предмет этой редкости */
+    function pickItem(rand) {
+        rand = rand || Math.random;
+        let r = rand() * 100, acc = 0, tier = 'mil';
+        for (let i = 0; i < RAR_DESC.length; i++) {
+            const k = RAR_DESC[RAR_DESC.length - 1 - i];     // от частых к редким
+            acc += RAR[k];
+            if (r < acc) { tier = k; break; }
+            tier = k;
+        }
+        const pool = ITEMS.filter((it) => it.r === tier);
+        return pool[Math.floor(rand() * pool.length)];
+    }
+
+    /* ================= СОСТОЯНИЕ (баланс + инвентарь) ================= */
+    const STORE_KEY = 'mv_state_v1';
+    const state = { balance: 100, inv: [], sound: true, fast: false };
+
+    try {
+        const s = JSON.parse(localStorage.getItem(STORE_KEY));
+        if (s && typeof s === 'object') {
+            if (typeof s.balance === 'number' && s.balance >= 0) state.balance = Math.floor(s.balance);
+            if (Array.isArray(s.inv)) state.inv = s.inv.filter((x) => x && ITEMS[x.id]);
+            state.sound = s.sound !== false;
+            state.fast = !!s.fast;
+        }
+    } catch (e) {}
+
+    function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+    /* ================= ОТРИСОВКА ПРЕДМЕТОВ ================= */
+    let uidN = 0;
+    const artHTML = (it) => '<div class="art">' + weaponSVG(it, 'cp' + (++uidN)) + '</div>';
+
+    function itemHTML(it, extra) {
+        return '<div class="item r-' + it.r + '">' + artHTML(it) +
+               '<div class="w">' + esc(it.w) + '</div><div class="s">' + esc(it.n) + '</div>' + (extra || '') + '</div>';
+    }
+
+    /* ================= ЭКРАНЫ ================= */
+    const viewHome = $('viewHome'), viewCase = $('viewCase');
+    let spinning = false;
+    let modalUid = null;
+
+    function showView(v) {
+        viewHome.hidden = v !== 'home';
+        viewCase.hidden = v !== 'case';
+        $('viewUp').hidden = v !== 'up';
+        $('tabs').hidden = v === 'case';
+        document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.getAttribute('data-tab') === v));
+        window.scrollTo(0, 0);
+        try { if (v === 'case') tg.BackButton.show(); else tg.BackButton.hide(); } catch (e) {}
+    }
+
+    function goBack() { if (!spinning) showView('home'); }
+    try { tg.BackButton.onClick(goBack); } catch (e) {}
+    $('backBtn').addEventListener('click', goBack);
+
+    /* ---------- баланс ---------- */
+    function renderBalance(bump) {
+        $('balanceVal').textContent = state.balance;
+        upSync();
+        if (bump) {
+            const b = $('balance');
+            b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
+        }
+    }
+
+    function topUp() {
+        state.balance += TOPUP;
+        save();
+        renderBalance(true);
+        renderCaseControls();
+        haptic.notify('success');
+    }
+
+    $('plusBtn').addEventListener('click', topUp);
+    $('topUpBtn').addEventListener('click', topUp);
+
+    /* ---------- главная: кейсы + инвентарь ---------- */
+    function renderCases() {
+        $('casesGrid').innerHTML =
+            '<button class="case-tile" id="caseTile" type="button"><div class="case-art">' + CRATE + '</div>' +
+            '<div class="case-name">' + CASE.name + '</div><div class="case-price">' + CASE.price + ' ' + COIN + '</div></button>';
+        $('caseTile').addEventListener('click', () => { haptic.select(); openCaseView(); });
+    }
+
+    function renderInventory() {
+        const t = T[lang];
+        const grid = $('invGrid');
+        const items = state.inv.map((x) => ({ it: ITEMS[x.id], uid: x.uid })).reverse();
+        grid.innerHTML = items.map((x) =>
+            itemHTML(x.it, '<button class="mini-sell" type="button" data-uid="' + esc(x.uid) + '">' + x.it.v + ' ' + COIN + '</button>')
+        ).join('');
+        $('invEmpty').hidden = items.length > 0;
+        if (!$('viewUp').hidden) renderUp();
+        const total = state.inv.reduce((s, x) => s + ITEMS[x.id].v, 0);
+        const sa = $('sellAllBtn');
+        sa.hidden = items.length === 0;
+        sa.innerHTML = t.sellAll + ' · ' + total + ' ' + COIN;
+    }
+
+    function sellItem(uid) {
+        const i = state.inv.findIndex((x) => x.uid === uid);
+        if (i < 0) return 0;
+        const v = ITEMS[state.inv[i].id].v;
+        state.inv.splice(i, 1);
+        state.balance += v;
+        save();
+        renderBalance(true);
+        renderInventory();
+        renderCaseControls();
+        return v;
+    }
+
+    $('invGrid').addEventListener('click', (e) => {
+        const b = e.target.closest && e.target.closest('.mini-sell');
+        if (!b) return;
+        haptic.impact('light');
+        sellItem(b.getAttribute('data-uid'));
+    });
+
+    $('sellAllBtn').addEventListener('click', () => {
+        const total = state.inv.reduce((s, x) => s + ITEMS[x.id].v, 0);
+        state.inv = [];
+        state.balance += total;
+        save();
+        renderBalance(true);
+        renderInventory();
+        renderCaseControls();
+        haptic.notify('success');
+    });
+
+    /* ---------- страница кейса ---------- */
+    function openCaseView() {
+        renderCaseStatic();
+        renderCaseControls();
+        showView('case');
+    }
+
+    function renderCaseStatic() {
+        const t = T[lang];
+        $('backTxt').textContent = t.back;
+        $('bigCrate').innerHTML = CRATE;
+        $('caseName').textContent = CASE.name;
+        $('contentsTitle').textContent = t.contents;
+        $('contentsGrid').innerHTML = ITEMS_SORTED.map((it) => itemHTML(it)).join('');
+        $('odds').innerHTML = RAR_DESC.map((k) =>
+            '<span class="r-' + k + '"><i></i>' + RAR[k] + '%</span>').join('');
+        $('fastBtn').innerHTML = ICON_BOLT;
+        renderSoundBtn();
+    }
+
+    function renderSoundBtn() { $('soundBtn').innerHTML = state.sound ? ICON_SOUND_ON : ICON_SOUND_OFF; }
+
+    function renderCaseControls() {
+        const t = T[lang];
+        const enough = state.balance >= CASE.price;
+        $('openBtn').innerHTML = t.open + ' ' + CASE.price + ' ' + COIN;
+        $('openBtn').disabled = !enough || spinning;
+        $('fastBtn').disabled = spinning;
+        $('fastBtn').classList.toggle('on', state.fast);
+        const n = $('notice');
+        n.hidden = enough || spinning;
+        if (!n.hidden) {
+            $('noticeTitle').innerHTML = t.notEnough.toUpperCase() + ' ' + (CASE.price - state.balance) + ' ' + COIN;
+            $('noticeText').textContent = t.insufficient;
+            $('topUpBtn').textContent = t.topUp + ' +' + TOPUP;
+        }
+    }
+
+    $('fastBtn').addEventListener('click', () => {
+        state.fast = !state.fast;
+        save();
+        haptic.select();
+        renderCaseControls();
+    });
+
+    $('soundBtn').addEventListener('click', () => {
+        state.sound = !state.sound;
+        save();
+        haptic.select();
+        renderSoundBtn();
+    });
+
+    /* ---------- звук и вибрация ---------- */
+    let actx = null;
+    function clickSound() {
+        if (!state.sound) return;
+        try {
+            actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+            const o = actx.createOscillator(), g = actx.createGain();
+            o.type = 'square';
+            o.frequency.value = 880;
+            g.gain.setValueAtTime(0.03, actx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + 0.04);
+            o.connect(g); g.connect(actx.destination);
+            o.start(); o.stop(actx.currentTime + 0.05);
+        } catch (e) {}
+    }
+
+    /* ---------- рулетка как в CS2 ---------- */
+    const CARD_W = 108, GAP = 6, STEP = CARD_W + GAP;
+    const STRIP_N = 60, WIN_IDX = 48;
+    const REDUCE = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const SPIN_MS = REDUCE ? 700 : 6200;
+
+    const stage = $('stage'), roulette = $('roulette'), track = $('track');
+
+    function rcardHTML(it, win) {
+        return '<div class="rcard r-' + it.r + (win ? ' win-target' : '') + '" data-id="' + it.id + '">' +
+               artHTML(it) + '<div class="w">' + esc(it.w) + '</div><div class="s">' + esc(it.n) + '</div></div>';
+    }
+
+    function buildStrip(winner) {
+        let html = '';
+        for (let i = 0; i < STRIP_N; i++) {
+            html += rcardHTML(i === WIN_IDX ? winner : pickItem(), i === WIN_IDX);
+        }
+        track.innerHTML = html;
+    }
+
+    function readX() {
+        const m = getComputedStyle(track).transform;
+        if (!m || m === 'none') return 0;
+        const v = m.slice(m.indexOf('(') + 1, -1).split(',');
+        return parseFloat(m.indexOf('matrix3d') === 0 ? v[12] : v[4]) || 0;
+    }
+
+    function tickLoop(center) {
+        let last = -1, lastAt = 0;
+        (function step(now) {
+            if (!spinning) return;
+            const idx = Math.floor((center - readX()) / STEP);
+            if (idx !== last) {
+                last = idx;
+                clickSound();
+                if (now - lastAt > 70) { haptic.select(); lastAt = now; }
+            }
+            requestAnimationFrame(step);
+        })(0);
+    }
+
+    function lockControls(on) {
+        spinning = on;
+        renderCaseControls();
+        $('backBtn').disabled = on;
+    }
+
+    function openCase() {
+        if (spinning || state.balance < CASE.price) return;
+
+        const win = pickItem();
+        const uid = Date.now() + '-' + Math.floor(Math.random() * 1e6);
+        state.balance -= CASE.price;
+        state.inv.push({ uid: uid, id: win.id });      // предмет в инвентаре сразу — не потеряется
+        save();
+        renderBalance(true);
+        haptic.impact('medium');
+        try { if (actx && actx.state === 'suspended') actx.resume(); } catch (e) {}
+
+        lockControls(true);
+
+        if (state.fast) {
+            showResult(win, uid);
+            return;
+        }
+
+        buildStrip(win);
+        stage.classList.add('spin');
+        track.style.transition = 'none';
+        track.style.transform = 'translateX(0px)';
+        void track.offsetWidth;
+
+        const center = roulette.clientWidth / 2;
+        const jitter = (Math.random() * 2 - 1) * (CARD_W / 2 - 10);       // останавливается в любом месте карточки
+        const targetCenter = WIN_IDX * STEP + CARD_W / 2 + jitter;
+        const x = -(targetCenter - center);
+
+        track.style.transition = 'transform ' + SPIN_MS + 'ms cubic-bezier(0.1, 0.65, 0.05, 1)';
+        track.style.transform = 'translateX(' + x + 'px)';
+        tickLoop(center);
+
+        setTimeout(() => {
+            const w = track.querySelector('.win-target');
+            if (w) w.classList.add('win');
+            haptic.impact('light');
+            setTimeout(() => showResult(win, uid), 450);
+        }, SPIN_MS + 150);
+    }
+
+    $('openBtn').addEventListener('click', openCase);
+
+    /* ---------- результат ---------- */
+    function showResult(it, uid) {
+        const t = T[lang];
+        modalUid = uid;
+        $('modalCard').className = 'modal-card r-' + it.r;
+        $('mRarity').textContent = t.rar[it.r];
+        $('mArt').innerHTML = artHTML(it);
+        $('mW').textContent = it.w;
+        $('mS').textContent = it.n;
+        $('mVal').innerHTML = it.v + ' ' + COIN;
+        $('keepBtn').textContent = t.keep;
+        $('sellBtn').innerHTML = t.sell + ' ' + it.v + ' ' + COIN;
+        $('modal').hidden = false;
+        haptic.notify(it.r === 'gold' || it.r === 'cov' || it.r === 'cla' ? 'success' : 'warning');
+    }
+
+    function closeModal() {
+        $('modal').hidden = true;
+        modalUid = null;
+        stage.classList.remove('spin');
+        track.innerHTML = '';
+        lockControls(false);
+        renderInventory();
+    }
+
+    $('keepBtn').addEventListener('click', closeModal);
+    $('sellBtn').addEventListener('click', () => {
+        if (modalUid) sellItem(modalUid);
+        haptic.impact('light');
+        closeModal();
+    });
+
     /* ================= ВРЕМЯ МИРА ================= */
     const CITIES = [
         { tz: ['Europe/Kyiv', 'Europe/Kiev'], ru: 'Киев',     ua: 'Київ',     en: 'Kyiv' },
@@ -498,7 +1447,7 @@
         { tz: ['Asia/Dubai'],                 ru: 'Дубай',    ua: 'Дубай',    en: 'Dubai' },
         { tz: ['Asia/Tokyo'],                 ru: 'Токио',    ua: 'Токіо',    en: 'Tokyo' }
     ];
- 
+
     function makeFmt(tzList) {
         // у старых WebView может не быть 'Europe/Kyiv' — пробуем запасное имя
         for (let i = 0; i < tzList.length; i++) {
@@ -513,20 +1462,20 @@
         }
         return null;
     }
- 
+
     function parts(fmt, date) {
         const o = {};
         fmt.formatToParts(date).forEach((p) => { o[p.type] = p.value; });
         return o;
     }
- 
+
     const dayNum = (o) => Date.UTC(+o.year, +o.month - 1, +o.day) / 86400000;
- 
+
     const localFmt = makeFmt([undefined]);
     const clocksEl = $('clocks');
     const localTimeEl = $('localTime');
     const tiles = [];
- 
+
     CITIES.forEach((c) => {
         const fmt = makeFmt(c.tz);
         if (!fmt) return;
@@ -543,8 +1492,8 @@
             sub: el.querySelector('.sub')
         });
     });
- 
-    function tick() {
+
+    function clockTick() {
         const now = new Date(), t = T[lang];
         let localDay = null;
         if (localFmt) {
@@ -568,18 +1517,18 @@
             x.sub.textContent = rel + (rel ? ' · ' : '') + (isDay ? t.day : t.night);
         });
     }
- 
+
     function clockLoop() {
-        try { tick(); } catch (e) {}
+        try { clockTick(); } catch (e) {}
         setTimeout(clockLoop, 1000 - (Date.now() % 1000) + 5);
     }
- 
+
     /* ================= ИДЕЯ ================= */
     const ideaInput = $('ideaInput');
     const sendBtn = $('sendBtn');
     const statusToast = $('statusToast');
     let toastState = null;
- 
+
     function renderToast() {
         const t = T[lang];
         if (!toastState) { statusToast.textContent = ''; statusToast.className = 'status-toast'; return; }
@@ -589,7 +1538,7 @@
             ? t.success + (toastState.test ? t.testSuffix : '')
             : (k === 'empty' ? t.empty : t.fail);
     }
- 
+
     sendBtn.addEventListener('click', () => {
         const text = ideaInput.value.trim();
         if (!text) {
@@ -599,7 +1548,7 @@
             return;
         }
         const payload = JSON.stringify({ idea: text });
- 
+
         if (tg && tg.initData) {
             try {
                 tg.sendData(payload);
@@ -615,154 +1564,284 @@
         }
         renderToast();
     });
- 
+
+
     /* ================= АПГРЕЙДЕР ================= */
-    const ITEM_VALUES = { '67': 67, '1000': 993 /* 1000-7 */, '69': 69, '228': 228 };
- 
-    const fromSel = $('fromItem');
-    const toSel = $('toItem');
-    const dial = $('dial');
-    const zone = $('zone');
-    const chanceText = $('chanceText');
-    const chanceLabel = $('chanceLabel');
-    const pointerWrapper = $('pointerWrapper');
-    const upgradeBtn = $('upgradeBtn');
-    const upgradeResult = $('upgradeResult');
- 
-    const SPIN_MS = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 400 : 3600;
-    dial.style.setProperty('--spin', SPIN_MS + 'ms');
- 
-    let chance = 30;
-    let totalRotation = 0;
-    let spinning = false;
-    let resultState = { kind: 'init' };
- 
-    /* Шкала как на референсе: 0% внизу, 50% слева и справа, 100% вверху.
-       Угол θ считается по часовой стрелке от верха; низ = 180°. */
-    const C = 130;
-    const f2 = (n) => n.toFixed(2);
-    function pt(r, th) {
-        const a = th * Math.PI / 180;
-        return [C + r * Math.sin(a), C - r * Math.cos(a)];
-    }
- 
+    const up = { sel: new Set(), bal: 0, target: null, pending: null, last: null, mult: null, invDesc: true, catDesc: true, from: '', to: '', q: '' };
+    const UP_MS = REDUCE ? 400 : 4200;
+    $('dial').style.setProperty('--spin', UP_MS + 'ms');
+    let upSpin = false, upRot = 0;
+
+    const r2 = (n) => Math.round(n * 100) / 100;
+    const upBet = () => {
+        let s = up.bal;
+        state.inv.forEach((x) => { if (up.sel.has(x.uid)) s += ITEMS[x.id].v; });
+        return s;
+    };
+    const upChance = () => {
+        const b = upBet();
+        if (!b || up.target === null) return 0;
+        return r2(Math.min(95, Math.max(0.01, b / ITEMS[up.target].v * 100)));
+    };
+
+    /* Шкала как на референсе: 0% внизу, 50% слева/справа, 100% вверху (угол от верха по часовой) */
+    const DC = 130, f2 = (n) => n.toFixed(2);
+    function dpt(r, th) { const a = th * Math.PI / 180; return [DC + r * Math.sin(a), DC - r * Math.cos(a)]; }
     function sector(rO, rI, a1, a2) {
-        const p1 = pt(rO, a1), p2 = pt(rO, a2), p3 = pt(rI, a2), p4 = pt(rI, a1);
+        const p1 = dpt(rO, a1), p2 = dpt(rO, a2), p3 = dpt(rI, a2), p4 = dpt(rI, a1);
         const large = (a2 - a1) > 180 ? 1 : 0;
-        return 'M' + f2(p1[0]) + ' ' + f2(p1[1]) +
-               'A' + rO + ' ' + rO + ' 0 ' + large + ' 1 ' + f2(p2[0]) + ' ' + f2(p2[1]) +
-               'L' + f2(p3[0]) + ' ' + f2(p3[1]) +
-               'A' + rI + ' ' + rI + ' 0 ' + large + ' 0 ' + f2(p4[0]) + ' ' + f2(p4[1]) + 'Z';
+        return 'M' + f2(p1[0]) + ' ' + f2(p1[1]) + 'A' + rO + ' ' + rO + ' 0 ' + large + ' 1 ' + f2(p2[0]) + ' ' + f2(p2[1]) +
+               'L' + f2(p3[0]) + ' ' + f2(p3[1]) + 'A' + rI + ' ' + rI + ' 0 ' + large + ' 0 ' + f2(p4[0]) + ' ' + f2(p4[1]) + 'Z';
     }
- 
-    function buildTicks() {
-        let shortD = '', longD = '';
+    (function buildTicks() {
+        let sd = '', ld = '';
         for (let p = 0; p <= 100; p += 2) {
-            const long = p % 10 === 0;
-            const r1 = long ? 109 : 114, r2 = 119;
-            const sides = (p === 0 || p === 100) ? [1] : [-1, 1];
-            sides.forEach((s) => {
-                const th = 180 + s * p * 1.8;
-                const a = pt(r1, th), b = pt(r2, th);
+            const long = p % 10 === 0, r1 = long ? 109 : 114;
+            ((p === 0 || p === 100) ? [1] : [-1, 1]).forEach((s) => {
+                const a = dpt(r1, 180 + s * p * 1.8), b = dpt(119, 180 + s * p * 1.8);
                 const seg = 'M' + f2(a[0]) + ' ' + f2(a[1]) + 'L' + f2(b[0]) + ' ' + f2(b[1]);
-                if (long) longD += seg; else shortD += seg;
+                if (long) ld += seg; else sd += seg;
             });
         }
-        $('ticksShort').setAttribute('d', shortD);
-        $('ticksLong').setAttribute('d', longD);
+        $('ticksShort').setAttribute('d', sd);
+        $('ticksLong').setAttribute('d', ld);
+    })();
+
+    /* Бросок и угол приземления считаются вместе — стрелка всегда останавливается там, где выпал результат */
+    function planSpin(ch, prev) {
+        const half = ch * 1.8, isWin = Math.random() * 100 < ch;
+        let th;
+        if (isWin) { const m = Math.min(3, half * 0.2); th = 180 - half + m + Math.random() * (2 * half - 2 * m); }
+        else { const span = 360 - 2 * half, m = Math.min(3, span * 0.2); th = 180 + half + m + Math.random() * (span - 2 * m); }
+        th = ((th % 360) + 360) % 360;
+        const want = (((th - 180) % 360) + 360) % 360;
+        return { isWin: isWin, total: prev - (((prev % 360) + 360) % 360) + 360 * 5 + want };
     }
- 
-    function calcChance() {
-        const c = ITEM_VALUES[fromSel.value] / ITEM_VALUES[toSel.value] * 100;
-        return Math.round(Math.min(95, Math.max(5, c)) * 100) / 100;
+
+    function resetPointer() {
+        const w = $('pointerWrapper');
+        w.style.transition = 'none';
+        w.style.transform = 'rotate(0deg)';
+        upRot = 0;
+        void w.offsetWidth;
+        w.style.transition = '';
+        $('dial').classList.remove('win');
     }
- 
-    function renderLevel() {
+
+    function upSync() {
+        if (up.bal > state.balance) up.bal = state.balance;
+        if (!$('viewUp').hidden && !upSpin) renderUp();
+    }
+
+    function upMini(it, attrs, on) {
+        return '<div class="item pick r-' + it.r + (on ? ' on' : '') + '" ' + attrs + '>' + artHTML(it) +
+               '<div class="w">' + esc(it.w) + '</div><div class="s">' + esc(it.n) + '</div>' +
+               '<div class="pv">' + it.v + ' ' + COIN + '</div></div>';
+    }
+
+    let upMsg = { k: 'init' };
+    function renderUpMsg() {
+        const t = T[lang], el = $('upResult');
+        let s = t.upInit, c = '';
+        if (upMsg.k === 'spin') s = t.upSpin;
+        else if (upMsg.k === 'win') { s = t.upWin.replace('{n}', upMsg.n); c = ' win'; }
+        else if (upMsg.k === 'lose') { s = t.upLose; c = ' lose'; }
+        el.textContent = s;
+        el.className = 'up-result' + c;
+    }
+
+    function renderUpTop() {
+        const t = T[lang], bet = upBet();
+        let ch = upChance(), shBet = bet;
+        if (bet <= 0 && up.last && up.target === up.last.tid) { ch = up.last.ch; shBet = up.last.bet; }
+        else if (up.last) { up.last = null; if (!upSpin) { resetPointer(); upMsg = { k: 'init' }; } }
+        up.sel.forEach((u) => { if (!state.inv.some((x) => x.uid === u)) up.sel.delete(u); });
+
+        const zone = $('zone');
+        zone.setAttribute('d', ch > 0 ? sector(90, 60, 180 - ch * 1.8, 180 + ch * 1.8) : '');
+        $('chanceText').textContent = ch.toFixed(2) + '%';
+        $('chanceLabel').textContent = (ch === 0 ? '' : (ch < 33 ? t.chLow : (ch < 66 ? t.chMid : t.chHigh))).toUpperCase();
+
+        const tg2 = up.target === null ? null : ITEMS[up.target];
+        $('upSum').innerHTML = shBet || tg2 ?
+            t.bet + ' ' + shBet + ' ' + COIN + (tg2 ? '  →  ' + t.target + ' ' + tg2.v + ' ' + COIN : '') : '';
+
+        let left = state.inv.filter((x) => up.sel.has(x.uid)).map((x) => upMini(ITEMS[x.id], 'data-uid="' + esc(x.uid) + '"', true)).join('');
+        if (up.bal > 0) left = '<div class="bal-chip">' + t.balLbl + ': ' + up.bal + ' ' + COIN + '</div>' + left;
+        $('upLeft').innerHTML = left || '<div class="up-hint" style="grid-column:1/-1">' + t.upHintL + '</div>';
+        $('upRight').innerHTML = tg2 ? upMini(tg2, 'data-clear="1"', true).replace('class="item pick', 'style="grid-column:1/-1" class="item pick') :
+            '<div class="up-hint" style="grid-column:1/-1">' + t.upHintR + '</div>';
+
+        const rg = $('balRange');
+        rg.max = state.balance;
+        rg.value = up.bal;
+        rg.disabled = upSpin || state.balance <= 0;
+        $('balVal').innerHTML = up.bal + ' ' + COIN;
+
+        document.querySelectorAll('#mults button').forEach((b) => {
+            b.disabled = upSpin || bet <= 0;
+            b.classList.toggle('on', up.mult === b.getAttribute('data-m'));
+        });
+        $('upBtn').disabled = upSpin || bet <= 0 || up.target === null;
+        $('upClearL').disabled = upSpin; $('upClearR').disabled = upSpin;
+        renderUpMsg();
+    }
+
+    function renderUpLists() {
         const t = T[lang];
-        const k = chance < 33 ? t.chLow : (chance < 66 ? t.chMid : t.chHigh);
-        chanceLabel.textContent = k.toUpperCase();
-    }
- 
-    function updateChance() {
-        chance = calcChance();
-        const half = chance * 1.8;                       // зона симметрична вокруг низа
-        zone.setAttribute('d', sector(90, 60, 180 - half, 180 + half));
-        chanceText.textContent = chance.toFixed(2) + '%';
-        renderLevel();
-    }
- 
-    /* Бросок и угол приземления стрелки считаются вместе:
-       стрелка ВСЕГДА останавливается там, где выпал результат. */
-    function planSpin(ch, prevTotal, rand) {
-        rand = rand || Math.random;
-        const half = ch * 1.8;
-        const isWin = rand() * 100 < ch;
-        let theta;
-        if (isWin) {
-            const m = Math.min(3, half * 0.2);
-            theta = 180 - half + m + rand() * (2 * half - 2 * m);
-        } else {
-            const span = 360 - 2 * half;
-            const m = Math.min(3, span * 0.2);
-            theta = 180 + half + m + rand() * (span - 2 * m);
+        let inv = state.inv.filter((x) => x.uid !== up.pending).map((x) => ({ x: x, it: ITEMS[x.id] }));
+        inv.sort((a, b) => up.invDesc ? b.it.v - a.it.v : a.it.v - b.it.v);
+        $('upInv').innerHTML = inv.length ? inv.map((o) => upMini(o.it, 'data-uid="' + esc(o.x.uid) + '"', up.sel.has(o.x.uid))).join('') : '';
+        if (!inv.length) {
+            $('upInv').innerHTML = '<div class="empty-up" style="grid-column:1/-1">' + t.upEmptyInv +
+                '<button class="btn small" type="button" data-go="home">' + t.goCases + '</button></div>';
         }
-        theta = ((theta % 360) + 360) % 360;
-        const want = (((theta - 180) % 360) + 360) % 360;        // поворот от стартовой позиции (низ)
-        const base = prevTotal - (((prevTotal % 360) + 360) % 360);
-        return { isWin: isWin, theta: theta, total: base + 360 * 5 + want };
+        const lo = up.from === '' ? 0 : +up.from, hi = up.to === '' ? Infinity : +up.to, q = up.q.trim().toLowerCase();
+        let cat = ITEMS.filter((it) => it.v >= lo && it.v <= hi && (it.w + ' ' + it.n).toLowerCase().indexOf(q) >= 0);
+        cat.sort((a, b) => up.catDesc ? b.v - a.v : a.v - b.v);
+        $('upCat').innerHTML = cat.map((it) => upMini(it, 'data-tid="' + it.id + '"', up.target === it.id)).join('');
+        $('invSort').textContent = up.invDesc ? '↓' : '↑';
+        $('catSort').textContent = up.catDesc ? '↓' : '↑';
     }
- 
-    function renderResult() {
-        const t = T[lang], s = resultState;
-        let msg = t.init, cls = '';
-        if (s.kind === 'spinning') msg = t.spinning;
-        else if (s.kind === 'win')  { msg = t.win.replace('{to}', s.to); cls = ' win'; }
-        else if (s.kind === 'lose') { msg = t.lose; cls = ' lose'; }
-        upgradeResult.textContent = msg;
-        upgradeResult.className = 'upgrade-result' + cls;
+
+    function renderUp() { renderUpTop(); renderUpLists(); }
+
+    function applyUp() {
+        const t = T[lang];
+        $('tabHome').textContent = t.tabHome; $('tabUp').textContent = t.tabUp;
+        $('upTitle').textContent = t.upTitle;
+        $('upLeftT').textContent = t.upLeftT; $('upRightT').textContent = t.upRightT;
+        $('upClearL').textContent = t.clear; $('upClearR').textContent = t.clear;
+        $('balLbl').textContent = t.balLbl;
+        $('upBtn').textContent = t.upgrade;
+        $('myItemsT').textContent = t.myItems; $('selItemT').textContent = t.selItem;
+        $('fFrom').placeholder = t.from; $('fTo').placeholder = t.to; $('fQ').placeholder = t.search;
+        if (!$('viewUp').hidden) renderUp();
     }
- 
-    function onItemChange() {
+
+    function pickTarget(want) {
+        const bet = upBet();
+        if (bet <= 0) return;
+        let best = null, d = Infinity, max = ITEMS[0];
+        ITEMS.forEach((it) => {
+            if (it.v > max.v) max = it;
+            if (it.v <= bet) return;
+            const dd = Math.abs(it.v - want);
+            if (dd < d) { d = dd; best = it; }
+        });
+        up.target = (best || max).id;
+    }
+
+    /* --- события --- */
+    document.querySelectorAll('#tabs button').forEach((b) => b.addEventListener('click', () => {
+        if (spinning || upSpin) return;
         haptic.select();
-        updateChance();
-        resultState = { kind: 'init' };
-        renderResult();
-    }
- 
-    fromSel.addEventListener('change', onItemChange);
-    toSel.addEventListener('change', onItemChange);
- 
-    upgradeBtn.addEventListener('click', () => {
-        if (spinning) return;
-        spinning = true;
-        upgradeBtn.disabled = true;
-        fromSel.disabled = true;
-        toSel.disabled = true;
-        resultState = { kind: 'spinning' };
-        renderResult();
-        haptic.impact('medium');
- 
-        const plan = planSpin(chance, totalRotation);
-        totalRotation = plan.total;
-        pointerWrapper.style.transform = 'rotate(' + totalRotation + 'deg)';
-        const to = toSel.value;
- 
-        setTimeout(() => {
-            resultState = { kind: plan.isWin ? 'win' : 'lose', to: to };
-            renderResult();
-            dial.classList.remove('win');
-            if (plan.isWin) { void dial.offsetWidth; dial.classList.add('win'); }
-            haptic.notify(plan.isWin ? 'success' : 'error');
-            spinning = false;
-            upgradeBtn.disabled = false;
-            fromSel.disabled = false;
-            toSel.disabled = false;
-        }, SPIN_MS + 150);
+        const v = b.getAttribute('data-tab');
+        showView(v);
+        if (v === 'up') renderUp();
+    }));
+
+    $('upInv').addEventListener('click', (e) => {
+        if (upSpin) return;
+        const go = e.target.closest('[data-go]');
+        if (go) { showView('home'); return; }
+        const el = e.target.closest('[data-uid]');
+        if (!el) return;
+        const u = el.getAttribute('data-uid');
+        if (up.sel.has(u)) up.sel.delete(u); else up.sel.add(u);
+        up.mult = null;
+        haptic.select();
+        renderUp();
     });
- 
+    $('upLeft').addEventListener('click', (e) => {
+        if (upSpin) return;
+        const el = e.target.closest('[data-uid]');
+        if (!el) return;
+        up.sel.delete(el.getAttribute('data-uid'));
+        up.mult = null;
+        renderUp();
+    });
+    $('upCat').addEventListener('click', (e) => {
+        if (upSpin) return;
+        const el = e.target.closest('[data-tid]');
+        if (!el) return;
+        up.target = +el.getAttribute('data-tid');
+        up.mult = null;
+        haptic.select();
+        renderUp();
+    });
+    $('upRight').addEventListener('click', (e) => {
+        if (!upSpin && e.target.closest('[data-clear]')) { up.target = null; up.mult = null; renderUp(); }
+    });
+    $('upClearL').addEventListener('click', () => { up.sel.clear(); up.bal = 0; up.mult = null; upMsg = { k: 'init' }; renderUp(); });
+    $('upClearR').addEventListener('click', () => { up.target = null; up.mult = null; upMsg = { k: 'init' }; renderUp(); });
+
+    $('balRange').addEventListener('input', (e) => {
+        up.bal = Math.min(state.balance, +e.target.value || 0);
+        up.mult = null;
+        renderUpTop();
+    });
+
+    $('mults').addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b || upSpin) return;
+        const m = b.getAttribute('data-m'), bet = upBet();
+        if (bet <= 0) return;
+        if (m[0] === 'x') pickTarget(bet * +m.slice(1));
+        else pickTarget(bet / (+m.slice(1) / 100));
+        up.mult = m;
+        haptic.select();
+        renderUp();
+    });
+
+    $('invSort').addEventListener('click', () => { up.invDesc = !up.invDesc; renderUpLists(); });
+    $('catSort').addEventListener('click', () => { up.catDesc = !up.catDesc; renderUpLists(); });
+    [['fFrom', 'from'], ['fTo', 'to'], ['fQ', 'q']].forEach((p) => $(p[0]).addEventListener('input', (e) => { up[p[1]] = e.target.value; renderUpLists(); }));
+
+    $('upBtn').addEventListener('click', () => {
+        const ch = upChance();
+        if (upSpin || ch <= 0 || up.target === null || upBet() <= 0) return;
+        const tgt = ITEMS[up.target];
+        const plan = planSpin(ch, upRot);
+        upRot = plan.total;
+        up.last = { ch: ch, bet: upBet(), tid: up.target };
+
+        /* ставка списывается, результат применяется сразу — перезагрузкой страницы не обойти */
+        state.inv = state.inv.filter((x) => !up.sel.has(x.uid));
+        state.balance -= up.bal;
+        let uid = null;
+        if (plan.isWin) {
+            uid = Date.now() + '-' + Math.floor(Math.random() * 1e6);
+            state.inv.push({ uid: uid, id: tgt.id });
+        }
+        save();
+        up.sel.clear(); up.bal = 0; up.mult = null; up.pending = uid;
+        upSpin = true;
+        upMsg = { k: 'spin' };
+        renderBalance(true);
+        renderUp();
+        haptic.impact('medium');
+        try { if (actx && actx.state === 'suspended') actx.resume(); } catch (e) {}
+
+        $('pointerWrapper').style.transform = 'rotate(' + upRot + 'deg)';
+
+        setTimeout(() => {
+            upSpin = false;
+            up.pending = null;
+            const d = $('dial');
+            d.classList.remove('win');
+            if (plan.isWin) { void d.offsetWidth; d.classList.add('win'); }
+            upMsg = plan.isWin ? { k: 'win', n: tgt.w + ' | ' + tgt.n } : { k: 'lose' };
+            haptic.notify(plan.isWin ? 'success' : 'error');
+            renderUp();
+            renderInventory();
+            if (plan.isWin) setTimeout(() => showResult(tgt, uid), 350);
+        }, UP_MS + 150);
+    });
+
     /* ================= ПРИМЕНИТЬ ЯЗЫК ================= */
     const langBtn = $('langToggleBtn');
- 
+
     function applyLang() {
         const t = T[lang];
         document.documentElement.lang = lang === 'ua' ? 'uk' : lang;
@@ -771,45 +1850,54 @@
         $('cardDesc').textContent = t.desc;
         ideaInput.placeholder = t.placeholder;
         sendBtn.textContent = t.send;
-        $('upTitle').textContent = t.upTitle;
-        $('fromLabel').textContent = t.from;
-        $('toLabel').textContent = t.to;
+        $('casesTitle').textContent = t.casesTitle;
+        $('demoNote').textContent = t.demoNote;
+        $('invTitle').textContent = t.inventory;
+        $('invEmpty').textContent = t.invEmpty;
+        applyUp();
         $('clocksTitle').textContent = t.clocks;
         tiles.forEach((x) => { x.name.textContent = x.c[lang]; });
-        renderLevel();
-        renderResult();
+        renderCases();
+        renderInventory();
+        $('backTxt').textContent = t.back;
+        $('contentsTitle').textContent = t.contents;
+        renderCaseControls();
         renderToast();
-        try { tick(); } catch (e) {}
+        try { clockTick(); } catch (e) {}
     }
- 
+
     langBtn.addEventListener('click', () => {
         lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length];
         try { localStorage.setItem('mv_lang', lang); } catch (e) {}
         haptic.select();
         applyLang();
+        if (!$('modal').hidden) {
+            const w = state.inv.find((x) => x.uid === modalUid);
+            if (w) showResult(ITEMS[w.id], modalUid);
+        }
     });
- 
-    buildTicks();
-    updateChance();
+
+    document.querySelectorAll('[data-coin]').forEach((e) => { e.innerHTML = COIN; });
+    renderBalance(false);
+    renderCaseStatic();
     applyLang();
     clockLoop();
- 
+
     /* ================= ФОН: СНЕГ + ПАДАЮЩИЕ ЗВЁЗДЫ ================= */
     try {
         const cv = $('sky');
         const ctx = cv.getContext('2d');
         const DPR = Math.min(window.devicePixelRatio || 1, 2);
-        const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
         let W = 0, H = 0, flakes = [], shoots = [], nextShoot = 2500, last = 0;
- 
+
         const rnd = (a, b) => a + Math.random() * (b - a);
- 
+
         const makeFlake = (atTop) => ({
             x: rnd(0, W), y: atTop ? -5 : rnd(0, H),
             r: rnd(0.7, 2.2), v: rnd(18, 55),
             sw: rnd(8, 26), ph: rnd(0, 6.28), a: rnd(0.25, 0.7)
         });
- 
+
         const draw = (ts, dt) => {
             ctx.clearRect(0, 0, W, H);
             ctx.fillStyle = '#fff';
@@ -824,8 +1912,8 @@
                 ctx.fill();
             }
             ctx.globalAlpha = 1;
- 
-            if (MODE !== 'snow' && !reduce) {
+
+            if (MODE !== 'snow' && !REDUCE) {
                 nextShoot -= dt * 1000;
                 if (nextShoot <= 0) {
                     const a = rnd(0.55, 0.85), sp = rnd(520, 820);
@@ -849,7 +1937,7 @@
                 }
             }
         };
- 
+
         const resize = () => {
             W = window.innerWidth; H = window.innerHeight;
             cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
@@ -859,19 +1947,19 @@
                 const n = Math.max(30, Math.min(Math.round(W * H / 9000), 110));
                 for (let i = 0; i < n; i++) flakes.push(makeFlake(false));
             }
-            if (reduce) draw(0, 0);
+            if (REDUCE) draw(0, 0);
         };
- 
+
         const frame = (ts) => {
             const dt = Math.min((ts - last) / 1000, 0.05);
             last = ts;
             draw(ts, dt);
             requestAnimationFrame(frame);
         };
- 
+
         window.addEventListener('resize', resize);
         resize();
-        if (!reduce) requestAnimationFrame((ts) => { last = ts; frame(ts); });
+        if (!REDUCE) requestAnimationFrame((ts) => { last = ts; frame(ts); });
     } catch (e) { /* фон не критичен — приложение работает и без него */ }
 })();
 </script>
